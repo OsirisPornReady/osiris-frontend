@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  title = 'osiris-frontend';
+  title = 'ng-zorro-test'
+  isCollapsed = false;
 }

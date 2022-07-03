@@ -1,0 +1,95 @@
+<nz-layout>
+  <nz-header class="modal-layout">
+    <nz-switch [(ngModel)]="editMode" nzCheckedChildren="编辑" nzUnCheckedChildren="查看" (ngModelChange)="switchEdit()"></nz-switch>
+  </nz-header>
+
+  <nz-content class="modal-layout">
+    <div class="video-detail">
+      <form nz-form [formGroup]="videoEditingForm" class="video-editing-form" (ngSubmit)="saveEditedForm()">
+        <nz-form-item>
+          <nz-form-control [nzSpan]="14">
+            <img
+              nz-image
+              width="300px"
+              height="300px"
+              [nzSrc]="video.thumbnail"
+              alt=""
+            />
+          </nz-form-control>
+        </nz-form-item >
+
+        <nz-form-item class="text-form-item">
+          <nz-form-label [nzSpan]="4" nzFor="title">title:</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <div [hidden]="editMode">
+              {{video.title}}
+            </div>
+            <input class="editting-cell" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input/>
+          </nz-form-control>
+        </nz-form-item >
+
+        <nz-form-item class="text-form-item">
+          <nz-form-label [nzSpan]="4" nzFor="actor">actor:</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <div [hidden]="editMode">
+              {{video.actor[0]}}
+            </div>
+            <input class="editting-cell" formControlName="actor" id="actor" [hidden]="!editMode" type="text" nz-input/>
+          </nz-form-control>
+        </nz-form-item >
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="4">tags:</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-tag
+              *ngFor="let tag of tags; let i = index"
+              [nzMode]="editMode ? 'closeable' : 'default'"
+              (nzOnClose)="handleClose(tag)"
+            >
+              {{ sliceTagName(tag) }}
+            </nz-tag>
+            <div *ngIf="editMode" style="display: inline-block">
+              <nz-tag *ngIf="!tagInputVisible" class="editable-tag" nzNoAnimation (click)="showTagInput()">
+                <i nz-icon nzType="plus"></i>
+                New Tag
+              </nz-tag>
+              <input
+                #tagInputElement
+                nz-input
+                nzSize="small"
+                *ngIf="tagInputVisible"
+                type="text"
+                [(ngModel)]="tagInputValue"
+                style="width: 78px;height: 22px"
+                (blur)="handleInputConfirm()"
+                (keydown.enter)="handleInputConfirm()"
+                [ngModelOptions]="{standalone: true}"
+              />
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="editMode">
+          <button nz-button type="submit" nzType="primary">保存修改</button>
+        </nz-form-item >
+      </form>
+    </div>
+  </nz-content>
+
+  <nz-footer class="modal-layout">
+    <nz-space [nzSize]="15">
+      <button *nzSpaceItem nz-button type="button" [disabled]="!modified" [nzLoading]="loading" nzType="primary" (click)="applyChange()">
+        <i nz-icon nzType="poweroff"></i>
+        提交修改
+      </button>
+      <button *nzSpaceItem nz-button type="button" nzType="default" (click)="goBack()">退出</button>
+    </nz-space>
+  </nz-footer>
+</nz-layout>
+
+
+<!--  按下回车 与提交表单按钮；当输入框是多个时。-->
+<!--  如果 type=button 则回车不会提交表单；-->
+<!--  如果 type=submit则回车会提交表单；-->
+
+

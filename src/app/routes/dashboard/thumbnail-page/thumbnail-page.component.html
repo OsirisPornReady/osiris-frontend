@@ -1,0 +1,13 @@
+<div nz-row [nzGutter]="5">
+  <div nz-col [nzSpan]="3" *ngFor="let video of videos">
+    <img style="display: block" [src]=video.thumbnail (click)="selectVideo(video.id)">
+    <p style="display: block">{{video.title}}</p>
+  </div>
+</div>
+
+<!--<nz-modal [nzWidth]="900" [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">-->
+<!--  <ng-container *nzModalContent>-->
+<!--    <video-detail [selectedVideoId]="selectedVideoId"></video-detail>-->
+<!--  </ng-container>-->
+<!--</nz-modal>-->
+
