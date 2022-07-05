@@ -1,6 +1,8 @@
 <div nz-row [nzGutter]="5">
   <div nz-col [nzSpan]="3" *ngFor="let video of videos">
-    <img style="display: block" [src]=video.thumbnail (click)="selectVideo(video.id)">
+    <div class="image-wrapper" (click)="selectVideo(video.id)">
+      <img style="display: block" [src]=video.thumbnail>
+    </div>
     <p style="display: block">{{video.title}}</p>
   </div>
 </div>

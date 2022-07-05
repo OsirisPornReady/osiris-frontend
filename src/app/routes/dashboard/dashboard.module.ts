@@ -25,6 +25,7 @@ import { NzTableModule } from "ng-zorro-antd/table";
 import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzSpaceModule } from "ng-zorro-antd/space";
+import { NzInputModule } from "ng-zorro-antd/input";
 
 
 
@@ -51,6 +52,7 @@ import { NzSpaceModule } from "ng-zorro-antd/space";
     NzSwitchModule,
     NzButtonModule,
     NzSpaceModule,
+    NzInputModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },

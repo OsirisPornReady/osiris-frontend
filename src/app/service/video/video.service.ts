@@ -11,7 +11,7 @@ export class VideoService {
   videoList:any = {
     1:new Video(
       'Down Under',
-      ['Luude'],
+      ['Luude','Colin'],
       'https://i.ytimg.com/an/vHasKL0eXBI/5175587361185972866_mq.jpg?v=62063e99',
       ['D & B'],
       '',
