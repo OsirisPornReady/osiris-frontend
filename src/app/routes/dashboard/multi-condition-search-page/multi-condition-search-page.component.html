@@ -1,0 +1,51 @@
+<!--<criteria-bar *ngFor="let criteria of criteriaList;let i = index" [criteria]="criteria" [conditionList]="conditionList"></criteria-bar>-->
+
+
+<form nz-form [formGroup]="criteriaForm" (ngSubmit)="search()">
+
+  <nz-form-item *ngFor="let control of listOfControl" class="criteria-form-item">
+    <nz-form-label class="criteria-label">test</nz-form-label>
+    <nz-form-control class="criteria-control">
+      <div [formGroupName]="control.controlInstance">
+        <nz-input-group nzSearch nzSize="large" [nzAddOnBefore]="addOnBeforeTemplate">
+          <ng-template #addOnBeforeTemplate>
+            <nz-select nzSize="large" [nzDropdownMatchSelectWidth]="false" [nzDropdownRender]="renderTemplate" formControlName="condition" [nzPlaceHolder]="conditionPlaceHolder">
+              <nz-option *ngFor="let condition of conditionList" [nzLabel]="condition" [nzValue]="condition"></nz-option>
+            </nz-select>
+            <ng-template #renderTemplate>
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #optionInputElement />
+                <a class="add-item" (click)="addConditon(optionInputElement)">
+                  <i nz-icon nzType="plus"></i>
+                  Add item
+                </a>
+              </div>
+            </ng-template>
+          </ng-template>
+          <input type="text" nzSize="large" [attr.id]="control.id" nz-input formControlName="content" [placeholder]="contentPlaceHolder">
+          <i nz-icon nzType="delete" class="dynamic-delete-button" (click)="removeCriteria(control, $event)"></i>
+        </nz-input-group>
+      </div>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <nz-form-item>
+    <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
+      <button nz-button nzType="dashed" class="add-button" (click)="createCriteria($event)">
+        <i nz-icon nzType="plus"></i>
+        Add field
+      </button>
+    </nz-form-control>
+  </nz-form-item>
+
+  <button type="submit" nz-button nzType="primary">search</button>
+<!--  submit事件触发的函数写在button这也行，这样可以放在form外面，但就不算submit，得手动获取值-->
+</form>
+
+
+
+
+
+

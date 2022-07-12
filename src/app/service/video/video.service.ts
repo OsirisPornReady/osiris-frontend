@@ -12,42 +12,42 @@ export class VideoService {
     1:new Video(
       'Down Under',
       ['Luude','Colin'],
-      'https://i.ytimg.com/an/vHasKL0eXBI/5175587361185972866_mq.jpg?v=62063e99',
+      '/assets/down under.jpg',
       ['D & B'],
       '',
     ),
     2:new Video(
       'Good Morning',
       ['Kanye West'],
-      'https://i1.sndcdn.com/artworks-dmdvj3sG4KOa-0-t240x240.jpg',
+      '/assets/Good morning.jpg',
       ["hip hop","rap"],
       '',
     ),
     3:new Video(
       'Prey',
       ['Mick Gordon'],
-      'https://i.scdn.co/image/ab67616d0000b2734af0850c0294d875edbef276',
+      '/assets/prey.jpg',
       ["Game Theme"],
       ''
     ),
     4:new Video(
       'Sad Machine',
       ['Porter Robinson'],
-      'https://i1.sndcdn.com/artworks-000108932407-u78n19-t500x500.jpg',
+      '/assets/sad machine.jpg',
       ["vocaloid"],
       '',
     ),
     5:new Video(
       'Snow Crash',
       ['Mitch Murder'],
-      'https://i1.sndcdn.com/artworks-000086485288-ypack3-t500x500.jpg',
+      '/assets/snow crash.jpg',
       ["Retro"],
       ''
     ),
     6:new Video(
       'Sakanaction',
       ['サカナクション',],
-      'https://upload.wikimedia.org/wikipedia/en/a/ab/Sakanaction_album_cover.jpg',
+      '/assets/Sakanaction_album_cover.jpg',
       ["electro & rock"],
       ''
     ),

@@ -13,6 +13,7 @@
               width="300px"
               height="300px"
               [nzSrc]="video.thumbnail"
+              [nzFallback]="'/assets/imageFallback.png'"
               alt=""
             />
           </nz-form-control>
@@ -29,35 +30,40 @@
         </nz-form-item >
 
         <nz-form-item>
-          <nz-form-label [nzSpan]="4">actor:</nz-form-label>
+          <nz-form-label [nzSpan]="4">stars:</nz-form-label>
           <nz-form-control [nzSpan]="14">
-            <a href="javascript:;" *ngFor="let actor of actors;let i = index" style="display:inline-block;">
-              {{actor}}<b *ngIf="i < actors.length-1">, </b>
-            </a>
+            <div *ngFor="let star of stars;let i = index" style="display:inline-block;">
+              <a href="javascript:;"  style="display:inline-block;">
+                {{star}}<b *ngIf="i < stars.length-1">, </b>
+              </a>
+              <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeStar(i)"></i>
+            </div>
             <div *ngIf="editMode" style="display: inline-block">
-              <a href="javascript:;">,</a>
-              <ng-container *ngIf="!actorInputVisible">
+              <a href="javascript:;">
+                <b> ,</b>
+              </a>
+              <ng-container *ngIf="!starInputVisible">
                 <a href="javascript:;">
-                  <i nz-icon nzType="plus" (click)="showActorInput()"></i>
+                  <i nz-icon nzType="plus" (click)="showStarInput()"></i>
                 </a>
               </ng-container>
-              <nz-input-group *ngIf="actorInputVisible" [nzSuffix]="actorInputSuffix" [nzCompact]="true">
+              <nz-input-group *ngIf="starInputVisible" [nzSuffix]="starInputSuffix" [nzCompact]="true">
                 <input
-                  #actorInputElement
+                  #starInputElement
                   nz-input
                   nzSize="small"
                   type="text"
-                  [(ngModel)]="actorInputValue"
+                  [(ngModel)]="starInputValue"
                   style="width: 78px;height: 22px;"
-                  (blur)="handleActorInputConfirm()"
-                  (keydown.enter)="handleActorInputConfirm()"
+                  (blur)="handleStarInputConfirm()"
+                  (keydown.enter)="handleStarInputConfirm()"
                   [ngModelOptions]="{standalone: true}"
                   nzBorderless
                 />
               </nz-input-group>
-              <ng-template #actorInputSuffix>
+              <ng-template #starInputSuffix>
                 <a href="javascript:;">
-                  <i nz-icon nzType="close" (click)="handleActorInputClose()"></i>
+                  <i nz-icon nzType="close" (click)="handleStarInputClose()"></i>
                 </a>
               </ng-template>
             </div>

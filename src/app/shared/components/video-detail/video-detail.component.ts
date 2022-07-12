@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
 import { Video } from "../../../models/video";
 import { VideoService } from "../../../service/video/video.service";
-import { FormControl,FormBuilder, FormGroup, FormArray, Validators } from "@angular/forms";
+import { FormControl, FormGroup, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { NzModalRef } from "ng-zorro-antd/modal";
 
 
@@ -15,15 +15,15 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
   @Input() selectedVideoId!:number;
 
   @ViewChild('tagInputElement', { static: false }) tagInputElement?: ElementRef;
-  @ViewChild('actorInputElement', { static: false }) actorInputElement?: ElementRef;
+  @ViewChild('starInputElement', { static: false }) starInputElement?: ElementRef;
 
   tagInputVisible = false;
   tagInputValue = '';
   tags:string[] = [];
 
-  actorInputVisible = false;
-  actorInputValue = '';
-  actors:string[] = [];
+  starInputVisible = false;
+  starInputValue = '';
+  stars:string[] = [];
 
   // video:Video = new Video();
   video!:Video;
@@ -67,8 +67,8 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
           // Object.assign(this.video,next);
 
           this.video = JSON.parse(JSON.stringify(next)); //将当前组件上的数据与service的数据隔离开
+          this.stars = JSON.parse(JSON.stringify(this.video.stars)) //将动态表单的驱动数据与当前组件的数据隔离开。
           this.tags = JSON.parse(JSON.stringify(this.video.tags)) //将动态表单的驱动数据与当前组件的数据隔离开。
-          this.actors = JSON.parse(JSON.stringify(this.video.actor)) //将动态表单的驱动数据与当前组件的数据隔离开。
           console.log('视频信息:',this.video)
         }
       }
@@ -77,7 +77,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
 
     this.videoEditingForm = this.fb.group({  //复杂控件要自己实现一个model处理层，这里仅供简单的标识和非空校验
       title:[this.video.title,[Validators.required]],
-      actor:[[],[Validators.required]],
+      stars:[[],[Validators.required]],
       thumbnail:[this.video.thumbnail],
       tags:[[],[Validators.required]],  //似乎是只有对象属性才会拷贝引用地址,之前用this.video.tags直接拷贝了引用,但是用this.tags似乎是深拷贝
       path:[this.video.path],
@@ -114,30 +114,34 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
 
 
 
-// ▼-----------------------------------------actor处理-----------------------------------------------------------▼
-  sliceActorName(actor: string): string {
-    const isLongTag = actor.length > 20;
-    return isLongTag ? `${actor.slice(0, 20)}...` : actor;
+// ▼-----------------------------------------star处理-----------------------------------------------------------▼
+  sliceStarName(star: string): string {
+    const isLongTag = star.length > 20;
+    return isLongTag ? `${star.slice(0, 20)}...` : star;
   }
 
-  showActorInput(): void {
-    this.actorInputVisible = true;
+  showStarInput(): void {
+    this.starInputVisible = true;
     setTimeout(() => {
-      this.actorInputElement?.nativeElement.focus();
+      this.starInputElement?.nativeElement.focus();
     }, 10);
   }
 
-  handleActorInputConfirm() {
-    if (this.actorInputValue && this.actors.indexOf(this.actorInputValue) === -1) {
-      this.actors = [...this.actors, this.actorInputValue];
+  handleStarInputConfirm() {
+    if (this.starInputValue && this.stars.indexOf(this.starInputValue) === -1) {
+      this.stars = [...this.stars, this.starInputValue];
     }
-    this.actorInputValue = '';
-    this.actorInputVisible = false;
+    this.starInputValue = '';
+    this.starInputVisible = false;
   }
 
-  handleActorInputClose() {
-    this.actorInputValue = '';
-    this.actorInputVisible = false;
+  handleStarInputClose() {
+    this.starInputValue = '';
+    this.starInputVisible = false;
+  }
+
+  removeStar(index:number) {
+    this.stars.splice(index,1);
   }
 // ▲-------------------------------------------------▲---------------------------------------------------------▲
 
@@ -149,7 +153,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
   }
 
   switchEdit(): void {
-    this.actors = JSON.parse(JSON.stringify(this.video.actor))
+    this.stars = JSON.parse(JSON.stringify(this.video.stars))
     this.tags = JSON.parse(JSON.stringify(this.video.tags))
     if (this.editMode) { //这个if主要是为了节省资源，不写也行
       // for (const i in this.videoEditingForm.controls) {
@@ -162,14 +166,14 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
     }
   }
 
-  patValueAndValidateActor(): void {
-    this.videoEditingForm.get('actor')?.patchValue(this.actors);
-    if (this.video.actor.length !== this.actors.length) {
-      this.videoEditingForm.get('actor')?.markAsDirty();
+  patValueAndValidateStars(): void {
+    this.videoEditingForm.get('stars')?.patchValue(this.stars);
+    if (this.video.stars.length !== this.stars.length) {
+      this.videoEditingForm.get('stars')?.markAsDirty();
     } else {
-      for (let i=0; i < this.actors.length; i++) {
-        if (this.video.actor[i] !== this.actors[i]) {
-          this.videoEditingForm.get('actor')?.markAsDirty();
+      for (let i=0; i < this.stars.length; i++) {
+        if (this.video.stars[i] !== this.stars[i]) {
+          this.videoEditingForm.get('stars')?.markAsDirty();
           break; //return也行
         }
       }
@@ -192,7 +196,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
 
   saveEditedForm(): void {
     //绑定到input这类简单输入组件的数据如title等可以自动校验(隐式校验)，但复杂类型的数据如actor、tags等最好手动控制校验
-    this.patValueAndValidateActor()
+    this.patValueAndValidateStars()
     this.patValueAndValidateTags()
     for (const i in this.videoEditingForm.controls) {
       this.videoEditingForm.controls[i].updateValueAndValidity();

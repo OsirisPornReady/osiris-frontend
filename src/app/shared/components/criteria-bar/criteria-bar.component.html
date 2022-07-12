@@ -1,0 +1,9 @@
+<nz-input-group nzSearch [nzAddOnBefore]="addOnBeforeTemplate">
+  <input type="text" nz-input [(ngModel)]="content" placeholder="search text">
+</nz-input-group>
+
+<ng-template #addOnBeforeTemplate>
+  <nz-select  [(ngModel)]="condition">
+    <nz-option *ngFor="let condition of conditionList" [nzLabel]="condition" [nzValue]="condition"></nz-option>
+  </nz-select>
+</ng-template>

@@ -18,7 +18,7 @@
             <a routerLink="./thumbnail-page">Workplace</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a>Monitor</a>
+            <a routerLink="./multi-condition-search-page">Monitor</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="./welcome">Welcome</a>
@@ -43,12 +43,14 @@
                [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
             ></i>
         </span>
+        <search-bar></search-bar>
       </div>
     </nz-header>
     <nz-content>
-      <div class="inner-content">
-        <router-outlet></router-outlet>
-      </div>
+<!--      <div class="inner-content">-->
+<!--        <router-outlet></router-outlet>-->
+<!--      </div>-->
+      <router-outlet></router-outlet>
     </nz-content>
   </nz-layout>
 </nz-layout>

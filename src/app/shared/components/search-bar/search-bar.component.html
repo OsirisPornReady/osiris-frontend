@@ -1,0 +1,21 @@
+<nz-input-group nzSearch [nzAddOnBefore]="addOnBeforeTemplate" [nzAddOnAfter]="suffixIconButton">
+  <input type="text" nz-input [(ngModel)]="searchContent" placeholder="search text">
+</nz-input-group>
+<!--nzSize="large"-->
+
+<ng-template #addOnBeforeTemplate>
+  <nz-select  [ngModel]="'Http://'">
+    <nz-option nzLabel="Http://" nzValue="Http://"></nz-option>
+    <nz-option nzLabel="Https://" nzValue="Https://"></nz-option>
+  </nz-select>
+</ng-template>
+<!--nzSize="large"-->
+
+<ng-template #suffixIconButton>
+  <button type="button" nz-button nzSearch (click)="commitSearch()">Search</button>
+</ng-template>
+<!--nzType="primary"-->
+
+
+
+

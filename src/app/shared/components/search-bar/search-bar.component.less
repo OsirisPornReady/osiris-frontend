@@ -1,0 +1,24 @@
+@search-bar-height: 40px;
+@search-bar-width: 600px;
+
+nz-input-group {
+  margin-top: 8px;
+  width: @search-bar-width;
+}
+
+input {
+  height: @search-bar-height;
+}
+
+button {
+  width: 80px;
+  height: @search-bar-height;
+}
+
+:host {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  width: @search-bar-width;
+  height: @search-bar-height+14px;
+}

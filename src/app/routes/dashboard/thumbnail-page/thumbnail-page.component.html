@@ -1,11 +1,18 @@
-<div nz-row [nzGutter]="5">
-  <div nz-col [nzSpan]="3" *ngFor="let video of videos">
-    <div class="image-wrapper" (click)="selectVideo(video.id)">
-      <img style="display: block" [src]=video.thumbnail>
+<div class="inner-content">
+  <div class="padding-div" (scroll)="onScroll($event)">
+    <div #virtualScrollWrapper class="virtualScroll-rapper">
+      <div #thumbnails nz-row [nzGutter]="5" class="thumbnail-content">
+        <div nz-col [nzSpan]="3" *ngFor="let video of showItem">
+          <div class="image-wrapper" (click)="selectVideo(video.id)">
+            <img style="display: block" [src]=video.thumbnail>
+          </div>
+          <p style="display: block">{{video.title}}</p>
+        </div>
+      </div>
     </div>
-    <p style="display: block">{{video.title}}</p>
   </div>
 </div>
+
 
 <!--<nz-modal [nzWidth]="900" [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">-->
 <!--  <ng-container *nzModalContent>-->

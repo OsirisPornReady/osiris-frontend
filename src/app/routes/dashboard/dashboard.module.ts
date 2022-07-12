@@ -16,9 +16,12 @@ registerLocaleData(zh);
 
 import { DashboardComponent } from "./dashboard.component";
 import { ThumbnailPageComponent } from './thumbnail-page/thumbnail-page.component';
+import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.component';
+import { SearchBarComponent } from "../../shared/components/search-bar/search-bar.component";
+import { CriteriaBarComponent } from "../../shared/components/criteria-bar/criteria-bar.component";
+
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {NzModalModule} from "ng-zorro-antd/modal";
-import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.component';
 import { NzImageModule } from "ng-zorro-antd/image";
 import { NzTagModule } from "ng-zorro-antd/tag";
 import { NzTableModule } from "ng-zorro-antd/table";
@@ -26,6 +29,9 @@ import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzInputModule } from "ng-zorro-antd/input";
+import { NzSelectModule } from "ng-zorro-antd/select";
+import { MultiConditionSearchPageComponent } from './multi-condition-search-page/multi-condition-search-page.component';
+import {NzDividerModule} from "ng-zorro-antd/divider";
 
 
 
@@ -33,7 +39,10 @@ import { NzInputModule } from "ng-zorro-antd/input";
   declarations: [
     DashboardComponent,
     ThumbnailPageComponent,
-    VideoDetailComponent
+    VideoDetailComponent,
+    SearchBarComponent,
+    CriteriaBarComponent,
+    MultiConditionSearchPageComponent,
   ],
   imports: [
     DashboardRoutingModule,
@@ -53,6 +62,8 @@ import { NzInputModule } from "ng-zorro-antd/input";
     NzButtonModule,
     NzSpaceModule,
     NzInputModule,
+    NzSelectModule,
+    NzDividerModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },
