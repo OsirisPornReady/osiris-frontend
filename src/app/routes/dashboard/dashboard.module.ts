@@ -16,7 +16,7 @@ registerLocaleData(zh);
 
 import { DashboardComponent } from "./dashboard.component";
 import { ThumbnailPageComponent } from './thumbnail-page/thumbnail-page.component';
-import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.componentOLD';
+import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.component';
 import { SearchBarComponent } from "../../shared/components/search-bar/search-bar.component";
 import { CriteriaBarComponent } from "../../shared/components/criteria-bar/criteria-bar.component";
 import { MultiConditionSearchPageComponent } from './multi-condition-search-page/multi-condition-search-page.component';

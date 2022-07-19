@@ -3,7 +3,7 @@ import { VideoService } from "../../../service/video/video.service";
 import { Observable, Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { NzModalService } from "ng-zorro-antd/modal";
-import { VideoDetailComponent } from "../../../shared/components/video-detail/video-detail.componentOLD";
+import { VideoDetailComponent } from "../../../shared/components/video-detail/video-detail.component";
 
 
 

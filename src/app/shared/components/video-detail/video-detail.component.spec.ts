@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VideoDetailComponent } from './video-detail.componentOLD';
+import { VideoDetailComponent } from './video-detail.component';
 
 describe('VideoDetailComponent', () => {
   let component: VideoDetailComponent;
