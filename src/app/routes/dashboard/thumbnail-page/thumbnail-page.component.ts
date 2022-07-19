@@ -3,7 +3,7 @@ import { VideoService } from "../../../service/video/video.service";
 import { Observable, Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { NzModalService } from "ng-zorro-antd/modal";
-import { VideoDetailComponent } from "../../../shared/components/video-detail/video-detail.component";
+import { VideoDetailComponent } from "../../../shared/components/video-detail/video-detail.componentOLD";
 
 
 
@@ -17,47 +17,50 @@ export class ThumbnailPageComponent implements OnInit {
   @ViewChild('thumbnails', { static:true }) thumbnails?:ElementRef;
   @ViewChild('virtualScrollWrapper', { static:true }) virtualScrollWrapper?:ElementRef;
 
-  // videos:any[] = [
-  //   {
-  //     id:1,
-  //     title:'Down Under',
-  //     thumbnail:'/assets/down under.jpg',
-  //     author:'Luude',
-  //   },
-  //   {
-  //     id:2,
-  //     title:'Good Morning',
-  //     thumbnail:'/assets/Good morning.jpg',
-  //     author:'Kanye West',
-  //   },
-  //   {
-  //     id:3,
-  //     title:'Prey',
-  //     thumbnail:'/assets/prey.jpg',
-  //     author:'Mick Gordon',
-  //   },
-  //   {
-  //     id:4,
-  //     title:'Sad Machine',
-  //     thumbnail:'/assets/sad machine.jpg',
-  //     author:'Porter Robinson',
-  //   },
-  //   {
-  //     id:5,
-  //     title:'Snow Crash',
-  //     thumbnail:'/assets/snow crash.jpg',
-  //     author:'Mitch Murder',
-  //   },
-  //   {
-  //     id:6,
-  //     title:'Sakanaction',
-  //     thumbnail:'/assets/Sakanaction_album_cover.jpg',
-  //     author: 'サカナクション',
-  //   }
-  // ];
+  videos:any[] = [
+    {
+      id:1,
+      title:'Down Under',
+      thumbnail:'/assets/down under.jpg',
+      author:'Luude',
+    },
+    {
+      id:2,
+      title:'Good Morning',
+      thumbnail:'/assets/Good morning.jpg',
+      author:'Kanye West',
+    },
+    {
+      id:3,
+      title:'Prey',
+      thumbnail:'/assets/prey.jpg',
+      author:'Mick Gordon',
+    },
+    {
+      id:4,
+      title:'Sad Machine',
+      thumbnail:'/assets/sad machine.jpg',
+      author:'Porter Robinson',
+    },
+    {
+      id:5,
+      title:'Snow Crash',
+      thumbnail:'/assets/snow crash.jpg',
+      author:'Mitch Murder',
+    },
+    {
+      id:6,
+      title:'Sakanaction',
+      thumbnail:'/assets/Sakanaction_album_cover.jpg',
+      author: 'サカナクション',
+    }
+  ];
+  modalWidth:number = 1300;
   // isVisible:boolean = false;
   // selectedVideoId?:number;
-  videos:any[] = [];
+  // videos:any[] = [];
+
+
 
 //--------------------------------虚拟滚动相关-----------------------------------------
   rowNumber = 8; //单行元素数
@@ -83,18 +86,6 @@ export class ThumbnailPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    for (let i=0;i < 9;i++) {
-      this.videos.push(
-        {
-          id:1,
-          title:'Down Under',
-          thumbnail:'/assets/down under.jpg',
-          author:'Luude',
-        }
-      )
-    }
-
 
     const videoNum = this.videos.length
     this.totalHeight = ( Math.floor(videoNum / this.rowNumber) + (videoNum % this.rowNumber > 0 ? 1 : 0) ) * this.itemHeight + 50 ; //考虑到占不满一行的情况下，当前videos能填满几行,增加尾部余量以防最后加载不出来
@@ -162,7 +153,7 @@ export class ThumbnailPageComponent implements OnInit {
       nzComponentParams: {
         selectedVideoId:id,
       },
-      nzWidth:900,
+      nzWidth:this.modalWidth,
       nzFooter:null,
     })
   }

@@ -1,18 +1,25 @@
-<div class="inner-content">
-  <div class="padding-div" (scroll)="onScroll($event)">
-    <div #virtualScrollWrapper class="virtualScroll-rapper">
-      <div #thumbnails nz-row [nzGutter]="5" class="thumbnail-content">
-        <div nz-col [nzSpan]="3" *ngFor="let video of showItem">
-          <div class="image-wrapper" (click)="selectVideo(video.id)">
-            <img style="display: block" [src]=video.thumbnail>
-          </div>
-          <p style="display: block">{{video.title}}</p>
-        </div>
+<div class="virtual-scroll-wrapper" (scroll)="onScroll($event)">
+  <div #virtualScrollWrapper class="virtual-scroll">
+    <div #thumbnails nz-row class="thumbnail-grid">
+      <div nz-col [nzSpan]="3" *ngFor="let video of showItem">
+        <nz-card class="thumbnail-card" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="selectVideo(video.id)">
+          <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
+        </nz-card>
+        <ng-template #coverTemplate>
+          <img style="display: block" [src]=video.thumbnail>
+        </ng-template>
       </div>
     </div>
   </div>
 </div>
 
+
+
+
+<!--<div class="image-wrapper" (click)="selectVideo(video.id)">-->
+<!--  <img style="display: block" [src]=video.thumbnail>-->
+<!--</div>-->
+<!--<p style="display: block">{{video.title}}</p>-->
 
 <!--<nz-modal [nzWidth]="900" [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">-->
 <!--  <ng-container *nzModalContent>-->

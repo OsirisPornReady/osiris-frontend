@@ -1,43 +1,151 @@
-@edit-formcontrol-height: 27px;
+@form-item-height: 27px;
+@modal-content-height: 600px;
 
-.modal-layout {
+.video-title {
+  display: inline-block;
+  position: absolute;
+  bottom: 12px;
+  margin-bottom: 0;
+  font-size: 50px;
+}
+
+.outer-layout {
   background-color: white;
+}
+
+.outer-layout-header {
+  position: relative;
+  padding-left: 0;
 }
 
 .video-detail {
   width: 100%;
-  height: 1000px;
+  height: @modal-content-height;
 }
 
-.text-form-item {
-  height: @edit-formcontrol-height;
-  margin-top: 10px;
+.video-editing-form {
+  width: 100%;
+  height: 100%;
 }
 
-.text-form-item nz-form-label,div {
-  line-height: @edit-formcontrol-height;
+.form-layout {
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
-.text-form-item div {
+.form-image-wrapper {
+  height: 100%;
+  padding-top: 10px;
+  border-right: 1px solid rgb(195, 191, 191);
+  background-color: white;
+}
+
+.form-data-wrapper {
+  padding-top: 10px;
+  padding-left: 20px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.form-item {
+  height: @form-item-height;
+  margin-bottom: 15px;
+}
+
+.form-item-data-label {
+  display: inline-block;
+  width: 50px;
+  line-height: @form-item-height;
+  text-align: right;
+}
+
+//.form-item-data-label:after {
+//  content: ":";
+//  position: relative;
+//  top: -0.5px;
+//  margin: 0 8px 0 2px;
+//}
+
+.form-item-data-div {
+  height: @form-item-height;
+  line-height: @form-item-height;
   padding-left: 3px;
 }
 
-.editting-cell {
-  height: @edit-formcontrol-height;
+.form-item-data-input {
+  height: @form-item-height;
   padding-left: 2px;
   border: 1px dashed #4d4c4c;
 }
 
-.editable-tag {
-  border: 1px dashed #1cc9df;
+.form-item-data-link-wrap-div {
+  line-height:@form-item-height;
+  padding-left: 3px;
 }
 
-nz-input-group {
-  width: 97px;
+.form-item-data-link {
+  display:inline-block;
+
+}
+
+.form-item-data-link:after {
+  content: ",";
+  position: relative;
+  top: -0.5px;
+  margin: 0 5px 0 1px; //上右下左
+}
+
+.form-item-data-remove-link {
+  font-size: 12px;
+  color: #c01010;
+}
+
+.form-item-data-new-link {
+  line-height: @form-item-height;
+}
+
+.form-item-data-link-wrap-div nz-input-group input {
+  border-bottom: 1px solid rgb(24, 144, 255);
+}
+
+.form-item-data-link-wrap-div nz-input-group {
+  width: 100px;
   padding: 0;
   border: 0;
 }
 
+.form-item-data-tag-wrap-div {
+  display:inline-block;
+  width: 500px;
+  line-height: @form-item-height;
+  padding-left: 3px;
+}
+
+//.form-item-data-tag-wrap-div nz-tag {
+//  width: 300px;
+//  height: 300px;
+//}
+
+.form-item-data-tag:hover {
+  cursor: pointer;
+  background-color: rgb(255, 187, 150);
+}
+
+.form-item-data-new-tag {
+  border: 1px dashed #1cc9df;
+}
+
+.switch-edit-mode {
+  float: right;
+}
+
+.save-form-button {
+  float: right;
+}
+
+//----主要是消除zorro自带的input和input group的focus样式----------------------------
 input:focus {
   -webkit-box-shadow: 0 0 0 0 rgba(87,168,233, .2);
   box-shadow: 0 0 0 0 rgba(87,168,233, .2);
@@ -56,7 +164,4 @@ input:focus {
 .ant-input {
   transition: none;
 }
-
-nz-input-group input {
-  border-bottom: 1px solid rgb(24, 144, 255);
-}
+//------------------------------------------------------------------------------

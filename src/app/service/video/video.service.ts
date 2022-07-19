@@ -64,7 +64,7 @@ export class VideoService {
     return this.videoList;
   }
 
-  getVideo(key:number): Video {
+  getVideo <T>(key:T): Video {
     return this.videoList[key];
   }
 
@@ -80,7 +80,13 @@ export class VideoService {
 
   pushVideo(key:any): void {
     try {
-      let nextValue:any = this.getVideo(key) //不一定所有方法都有返回值,若无将赋值替换即可
+      let nextValue:any
+      if (typeof key == "number") {
+        // let nextValue:any = this.getVideo<number>(key) //不一定所有方法都有返回值,若无将赋值替换即可
+        nextValue = this.getVideo<number>(key) //不一定所有方法都有返回值,若无将赋值替换即可
+      } else if (typeof key == "string") {
+        nextValue = this.getVideo<string>(key) //不一定所有方法都有返回值,若无将赋值替换即可
+      }
       this.videoStream$.next(nextValue);
     } catch (error) {
       this.videoStream$.next(error);

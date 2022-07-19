@@ -5,18 +5,22 @@
 }
 
 .criteria-label {
-  text-align: right;
+  text-align: right ;
   width: 100px;
   font-size: 24px;
   margin-right: 12px;
 }
 
-.criteria-label:after {
-  content: ":";
-  position: relative;
-  top: -0.5px;
-  margin: 0 8px 0 2px;
+:host /deep/ .criteria-label label{
+  font-size: 24px;
 }
+
+//.criteria-label:after {
+//  content: ":";
+//  position: relative;
+//  top: -0.5px;
+//  margin: 0 8px 0 2px;
+//}
 
 .criteria-control nz-input-group {
   position: relative;

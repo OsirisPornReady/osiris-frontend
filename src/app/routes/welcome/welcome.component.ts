@@ -9,6 +9,8 @@ import {Video} from "../../models/video";
 })
 export class WelcomeComponent implements OnInit {
 
+  show:boolean = true;
+
   constructor(
     private videoService: VideoService,
   ) { }

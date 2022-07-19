@@ -1,28 +1,32 @@
+@image-width: 150px;
+@image-height: 150px;
+
 img {
-  width: 150px;
+  width: @image-width;
+  height: @image-height;
 }
 
-.image-wrapper {
-  width: 150px;
-  height: 150px;
-  border: 0;
-  margin: 0;
-  padding: 0;
+.thumbnail-card {
+  width: @image-width;
+  margin: 10px;
 }
 
-.inner-content {
-  padding: 24px;
-  background: #fff;
-  height: 100%;
-}
+//.image-wrapper {
+//  width: 150px;
+//  height: 150px;
+//  border: 0;
+//  margin: 0;
+//  padding: 0;
+//}
 
-.padding-div {
+.virtual-scroll-wrapper {
   width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-.virtualScroll-rapper {
+.virtual-scroll {
   width: 100%;
 }
+

@@ -16,9 +16,12 @@ registerLocaleData(zh);
 
 import { DashboardComponent } from "./dashboard.component";
 import { ThumbnailPageComponent } from './thumbnail-page/thumbnail-page.component';
-import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.component';
+import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.componentOLD';
 import { SearchBarComponent } from "../../shared/components/search-bar/search-bar.component";
 import { CriteriaBarComponent } from "../../shared/components/criteria-bar/criteria-bar.component";
+import { MultiConditionSearchPageComponent } from './multi-condition-search-page/multi-condition-search-page.component';
+
+import { AclIfDirective } from "../../directive/acl-if.directive";
 
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {NzModalModule} from "ng-zorro-antd/modal";
@@ -30,8 +33,9 @@ import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzInputModule } from "ng-zorro-antd/input";
 import { NzSelectModule } from "ng-zorro-antd/select";
-import { MultiConditionSearchPageComponent } from './multi-condition-search-page/multi-condition-search-page.component';
 import {NzDividerModule} from "ng-zorro-antd/divider";
+import {NzCardModule} from "ng-zorro-antd/card";
+import {NzFormModule} from "ng-zorro-antd/form";
 
 
 
@@ -43,28 +47,31 @@ import {NzDividerModule} from "ng-zorro-antd/divider";
     SearchBarComponent,
     CriteriaBarComponent,
     MultiConditionSearchPageComponent,
+    AclIfDirective,
   ],
-  imports: [
-    DashboardRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    CommonModule,
-    IconsProviderModule,
-    NzLayoutModule,
-    NzMenuModule,
-    NzGridModule,
-    NzModalModule,
-    NzImageModule,
-    NzTagModule,
-    NzTableModule,
-    NzSwitchModule,
-    NzButtonModule,
-    NzSpaceModule,
-    NzInputModule,
-    NzSelectModule,
-    NzDividerModule,
-  ],
+    imports: [
+        DashboardRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        CommonModule,
+        IconsProviderModule,
+        NzLayoutModule,
+        NzMenuModule,
+        NzGridModule,
+        NzModalModule,
+        NzImageModule,
+        NzTagModule,
+        NzTableModule,
+        NzSwitchModule,
+        NzButtonModule,
+        NzSpaceModule,
+        NzInputModule,
+        NzSelectModule,
+        NzDividerModule,
+        NzCardModule,
+        NzFormModule,
+    ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },
   ],

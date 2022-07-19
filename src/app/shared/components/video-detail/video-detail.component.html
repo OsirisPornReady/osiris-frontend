@@ -1,121 +1,171 @@
 <nz-layout>
-  <nz-header class="modal-layout">
-    <nz-switch [(ngModel)]="editMode" nzCheckedChildren="编辑" nzUnCheckedChildren="查看" (ngModelChange)="switchEdit()"></nz-switch>
+  <nz-header class="outer-layout outer-layout-header">
+    <h5 class="video-title">{{video.title}}</h5>
+    <nz-switch
+      *aclIf="role"
+      class="switch-edit-mode"
+      [(ngModel)]="editMode"
+      nzCheckedChildren="编辑"
+      nzUnCheckedChildren="查看"
+      (ngModelChange)="switchEdit()">
+    </nz-switch>
   </nz-header>
 
-  <nz-content class="modal-layout">
+  <nz-content class="outer-layout">
     <div class="video-detail">
-      <form nz-form [formGroup]="videoEditingForm" class="video-editing-form" (ngSubmit)="saveEditedForm()">
-        <nz-form-item>
-          <nz-form-control [nzSpan]="14">
-            <img
-              nz-image
-              width="300px"
-              height="300px"
-              [nzSrc]="video.thumbnail"
-              [nzFallback]="'/assets/imageFallback.png'"
-              alt=""
-            />
-          </nz-form-control>
-        </nz-form-item >
-
-        <nz-form-item class="text-form-item">
-          <nz-form-label [nzSpan]="4" nzFor="title">title:</nz-form-label>
-          <nz-form-control [nzSpan]="14">
-            <div [hidden]="editMode">
-              {{video.title}}
-            </div>
-            <input class="editting-cell" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input/>
-          </nz-form-control>
-        </nz-form-item >
-
-        <nz-form-item>
-          <nz-form-label [nzSpan]="4">stars:</nz-form-label>
-          <nz-form-control [nzSpan]="14">
-            <div *ngFor="let star of stars;let i = index" style="display:inline-block;">
-              <a href="javascript:;"  style="display:inline-block;">
-                {{star}}<b *ngIf="i < stars.length-1">, </b>
-              </a>
-              <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeStar(i)"></i>
-            </div>
-            <div *ngIf="editMode" style="display: inline-block">
-              <a href="javascript:;">
-                <b> ,</b>
-              </a>
-              <ng-container *ngIf="!starInputVisible">
-                <a href="javascript:;">
-                  <i nz-icon nzType="plus" (click)="showStarInput()"></i>
-                </a>
-              </ng-container>
-              <nz-input-group *ngIf="starInputVisible" [nzSuffix]="starInputSuffix" [nzCompact]="true">
-                <input
-                  #starInputElement
-                  nz-input
-                  nzSize="small"
-                  type="text"
-                  [(ngModel)]="starInputValue"
-                  style="width: 78px;height: 22px;"
-                  (blur)="handleStarInputConfirm()"
-                  (keydown.enter)="handleStarInputConfirm()"
-                  [ngModelOptions]="{standalone: true}"
-                  nzBorderless
+      <form nz-form id="videoEditingForm" [formGroup]="videoEditingForm" class="video-editing-form" (ngSubmit)="saveEditedForm()">
+        <nz-layout class="form-layout">
+          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth">
+            <nz-form-item>
+              <nz-form-control>
+                <img
+                  nz-image
+                  width="300px"
+                  height="300px"
+                  [nzSrc]="video.thumbnail"
+                  [nzFallback]="'/assets/imageFallback.png'"
+                  alt=""
                 />
-              </nz-input-group>
-              <ng-template #starInputSuffix>
-                <a href="javascript:;">
-                  <i nz-icon nzType="close" (click)="handleStarInputClose()"></i>
-                </a>
-              </ng-template>
-            </div>
-          </nz-form-control>
-        </nz-form-item >
+              </nz-form-control>
+            </nz-form-item >
+          </nz-sider>
 
-        <nz-form-item>
-          <nz-form-label [nzSpan]="4">tags:</nz-form-label>
-          <nz-form-control [nzSpan]="14">
-            <nz-tag
-              *ngFor="let tag of tags; let i = index"
-              [nzMode]="editMode ? 'closeable' : 'default'"
-              (nzOnClose)="handleClose(tag)"
-            >
-              {{ sliceTagName(tag) }}
-            </nz-tag>
-            <div *ngIf="editMode" style="display: inline-block">
-              <nz-tag *ngIf="!tagInputVisible" class="editable-tag" nzNoAnimation (click)="showTagInput()">
-                <i nz-icon nzType="plus"></i>
-                New Tag
-              </nz-tag>
-              <input
-                #tagInputElement
-                nz-input
-                nzSize="small"
-                *ngIf="tagInputVisible"
-                type="text"
-                [(ngModel)]="tagInputValue"
-                style="width: 78px;height: 22px"
-                (blur)="handleTagInputConfirm()"
-                (keydown.enter)="handleTagInputConfirm()"
-                [ngModelOptions]="{standalone: true}"
-              />
-            </div>
-          </nz-form-control>
-        </nz-form-item>
+<!--          [nzSpan]="4"-->
+<!--          [nzSpan]="14"-->
 
-        <nz-form-item *ngIf="editMode">
-          <button nz-button type="submit" nzType="primary">保存修改</button>
-        </nz-form-item >
+          <nz-content class="form-data-wrapper">
+            <nz-form-item class="form-item">
+              <nz-form-label nzFor="title" class="form-item-data-label">title</nz-form-label>
+              <nz-form-control>
+                <div [hidden]="editMode" class="form-item-data-div">
+                  {{video.title}}
+                </div>
+                <input class="form-item-data-input" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input (keydown.enter)="saveEditedForm()"/>
+              </nz-form-control>
+            </nz-form-item >
+
+            <nz-form-item class="form-item">
+              <nz-form-label class="form-item-data-label">stars</nz-form-label>
+              <nz-form-control class="form-item-link">
+                <div class="form-item-data-link-wrap-div">
+                  <a
+                    *ngFor="let star of stars;let i = index"
+                    href="javascript:;"
+                    class="form-item-data-link">
+                    {{star}}
+                    <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeStar(i)" class="form-item-data-remove-link"></i>
+                  </a>
+                  <div *ngIf="editMode" style="display: inline-block">
+                    <ng-container *ngIf="!starInputVisible">
+                      <a href="javascript:;" class="form-item-data-new-link">
+                        <i nz-icon nzType="plus" (click)="showStarInput()"></i>
+                      </a>
+                    </ng-container>
+                    <nz-input-group *ngIf="starInputVisible" [nzSuffix]="starInputSuffix" [nzCompact]="true">
+                      <input
+                        #starInputElement
+                        nz-input
+                        nzSize="small"
+                        type="text"
+                        [(ngModel)]="starInputValue"
+                        style="width: 78px;height: 22px;"
+                        (blur)="handleStarInputConfirm()"
+                        (keydown.enter)="handleStarInputConfirm()"
+                        [ngModelOptions]="{standalone: true}"
+                        nzBorderless
+                      />
+                    </nz-input-group>
+                    <ng-template #starInputSuffix>
+                      <a href="javascript:;">
+                        <i nz-icon nzType="close" (click)="handleStarInputClose()"></i>
+                      </a>
+                    </ng-template>
+                  </div>
+                </div>
+
+              </nz-form-control>
+            </nz-form-item >
+
+            <nz-form-item class="form-item">
+              <nz-form-label class="form-item-data-label">tags</nz-form-label>
+              <nz-form-control>
+                <div class="form-item-data-tag-wrap-div">
+                  <nz-tag
+                    [class]="!editMode ? 'form-item-data-tag' : ''"
+                    *ngFor="let tag of tags; let i = index"
+                    [nzColor]="'volcano'"
+                    [nzMode]="editMode ? 'closeable' : 'default'"
+                    (nzOnClose)="handleClose(tag)"
+                  >
+                    {{ sliceTagName(tag) }}
+                  </nz-tag>
+                  <div *ngIf="editMode" style="display: inline-block">
+                    <nz-tag *ngIf="!tagInputVisible" class="form-item-data-new-tag" nzNoAnimation (click)="showTagInput()">
+                      <i nz-icon nzType="plus"></i>
+                      New Tag
+                    </nz-tag>
+                    <input
+                      #tagInputElement
+                      nz-input
+                      nzSize="small"
+                      *ngIf="tagInputVisible"
+                      type="text"
+                      [(ngModel)]="tagInputValue"
+                      style="width: 78px;height: 22px"
+                      (blur)="handleTagInputConfirm()"
+                      (keydown.enter)="handleTagInputConfirm()"
+                      [ngModelOptions]="{standalone: true}"
+                    />
+                  </div>
+                </div>
+              </nz-form-control>
+            </nz-form-item>
+
+<!--            <ng-container *ngFor="let a of testArray">-->
+<!--              <nz-form-item class="form-item">-->
+<!--                <nz-form-label nzFor="title" class="form-item-data-label">title</nz-form-label>-->
+<!--                <nz-form-control>-->
+<!--                  <div [hidden]="editMode" class="form-item-data-div">-->
+<!--                    {{video.title}}-->
+<!--                  </div>-->
+<!--                  <input class="form-item-data-input" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input/>-->
+<!--                </nz-form-control>-->
+<!--              </nz-form-item >-->
+<!--            </ng-container>-->
+
+          </nz-content>
+
+        </nz-layout>
+
+<!--        <nz-form-item *ngIf="editMode">-->
+<!--          <button nz-button type="submit" nzType="primary">保存修改</button>-->
+<!--        </nz-form-item >-->
       </form>
     </div>
   </nz-content>
 
-  <nz-footer class="modal-layout">
+  <nz-footer class="outer-layout">
     <nz-space [nzSize]="15">
-      <button *nzSpaceItem nz-button type="button" [disabled]="!modified" [nzLoading]="loading" nzType="primary" (click)="applyChange()">
-        <i nz-icon nzType="poweroff"></i>
-        提交修改
-      </button>
+      <ng-container *aclIf="role">
+        <button *nzSpaceItem nz-button type="button" [disabled]="!modified" [nzLoading]="loading" nzType="primary" (click)="applyChange()">
+          <i nz-icon nzType="poweroff"></i>
+          提交修改
+        </button>
+      </ng-container>
       <button *nzSpaceItem nz-button type="button" nzType="default" (click)="goBack()">返回</button>
     </nz-space>
+
+    <ng-container *aclIf="role">
+      <button
+        nz-button
+        *ngIf="editMode"
+        type="submit"
+        form="videoEditingForm"
+        nzType="primary"
+        class="save-form-button">
+          保存修改
+      </button>
+    </ng-container>
   </nz-footer>
 </nz-layout>
 
