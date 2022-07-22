@@ -1,9 +1,9 @@
 export class Video {
-  title:string
-  stars:string[]
-  thumbnail:string
-  tags:string[]
-  path:string
+  title:string;
+  stars:string[];
+  thumbnail:string;
+  tags:string[];
+  path:string;
 
   constructor(
     title:string = '',

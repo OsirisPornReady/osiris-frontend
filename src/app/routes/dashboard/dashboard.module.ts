@@ -36,6 +36,7 @@ import { NzSelectModule } from "ng-zorro-antd/select";
 import {NzDividerModule} from "ng-zorro-antd/divider";
 import {NzCardModule} from "ng-zorro-antd/card";
 import {NzFormModule} from "ng-zorro-antd/form";
+import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 
 
 
@@ -49,29 +50,30 @@ import {NzFormModule} from "ng-zorro-antd/form";
     MultiConditionSearchPageComponent,
     AclIfDirective,
   ],
-    imports: [
-        DashboardRoutingModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        CommonModule,
-        IconsProviderModule,
-        NzLayoutModule,
-        NzMenuModule,
-        NzGridModule,
-        NzModalModule,
-        NzImageModule,
-        NzTagModule,
-        NzTableModule,
-        NzSwitchModule,
-        NzButtonModule,
-        NzSpaceModule,
-        NzInputModule,
-        NzSelectModule,
-        NzDividerModule,
-        NzCardModule,
-        NzFormModule,
-    ],
+  imports: [
+    DashboardRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    CommonModule,
+    IconsProviderModule,
+    NzLayoutModule,
+    NzMenuModule,
+    NzGridModule,
+    NzModalModule,
+    NzImageModule,
+    NzTagModule,
+    NzTableModule,
+    NzSwitchModule,
+    NzButtonModule,
+    NzSpaceModule,
+    NzInputModule,
+    NzSelectModule,
+    NzDividerModule,
+    NzCardModule,
+    NzFormModule,
+    NzDatePickerModule,
+  ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },
   ],

@@ -1,10 +1,14 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { Video } from "../../../models/video";
 import { VideoService } from "../../../service/video/video.service";
 import { FormControl, FormGroup, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { NzModalRef } from "ng-zorro-antd/modal";
+import { NzMessageService } from "ng-zorro-antd/message";
 // import { AclIfDirective } from "../../../directive/acl-if.directive";
 import { LinkValidator } from "../../validators/link.validator";
+import { TagValidator } from "../../validators/tag.validator";
+import { ArrayDataTypeValidator } from "../../validators/arrayDataType.validator";
+import {filter} from "rxjs/operators";
 
 
 @Component({
@@ -13,16 +17,26 @@ import { LinkValidator } from "../../validators/link.validator";
   styleUrls: ['./video-detail.component.less'],
   // viewProviders: [AclIfDirective],
 })
-export class VideoDetailComponent implements OnInit,OnDestroy {
+export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
 
   role:string = 'admin';
+
+  testFlag = false;
 
   // testArray = new Array(100);
 
   @Input() selectedVideoId!:number;
 
-  @ViewChild('tagInputElement', { static: false }) tagInputElement?: ElementRef;
-  @ViewChild('starInputElement', { static: false }) starInputElement?: ElementRef;
+  // @ViewChild('tagInputElement', { static: false }) tagInputElement?: ElementRef;
+  // @ViewChild('starInputElement', { static: false }) starInputElement?: ElementRef;
+
+  @ViewChild('starInputElement', { static: false }) set starInputElement(starInputElement:ElementRef) {
+    this.arrayTypeDataInputElementDict['stars'] = starInputElement;
+  };
+
+  @ViewChild('tagInputElement', { static: false }) set tagInputElement(tagInputElement:ElementRef) {
+    this.arrayTypeDataInputElementDict['tags'] = tagInputElement;
+  };
 
   tagInputVisible = false;
   tagInputValue = '';
@@ -31,6 +45,13 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
   starInputVisible = false;
   starInputValue = '';
   stars:string[] = [];
+
+
+  arrayTypeDataInputElementDict:any = {};
+  arrayTypeDataInputVisibleDict:any = {};
+  arrayTypeDataInputValueDict:any = {};
+  arrayTypeDataDict:any = {};
+
 
   // video:Video = new Video();
   video!:Video;
@@ -50,7 +71,8 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    console.log('init')
+    console.log(this.video);
+    console.log('init');
     // const videoObserver = {  //其实就是定义了一个处理推送信息的模式
     //   next: (v:any) =>{
     //     this.video = v;
@@ -75,8 +97,19 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
           // Object.assign(this.video,next);
 
           this.video = JSON.parse(JSON.stringify(next)); //将当前组件上的数据与service的数据隔离开
-          this.stars = JSON.parse(JSON.stringify(this.video.stars)) //将动态表单的驱动数据与当前组件的数据隔离开。
-          this.tags = JSON.parse(JSON.stringify(this.video.tags)) //将动态表单的驱动数据与当前组件的数据隔离开。
+          for (let field in this.video) { //复杂数据类型的中间层
+            if (this.video[field as keyof Video] instanceof Array) {
+              this.arrayTypeDataInputVisibleDict[field] = false;
+              this.arrayTypeDataInputValueDict[field] = ''
+              this.arrayTypeDataDict[field] = JSON.parse(JSON.stringify(this.video[field as keyof Video]));
+            }
+          }
+
+
+
+
+          // this.stars = JSON.parse(JSON.stringify(this.video.stars)) //将动态表单的驱动数据与当前组件的数据隔离开。
+          // this.tags = JSON.parse(JSON.stringify(this.video.tags)) //将动态表单的驱动数据与当前组件的数据隔离开。
           console.log('视频信息:',this.video)
         }
       }
@@ -85,73 +118,139 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
 
     this.videoEditingForm = this.fb.group({  //复杂控件要自己实现一个model处理层，这里仅供简单的标识和非空校验
       title:[this.video.title,[Validators.required]],
-      stars:[[],[Validators.required,LinkValidator]],
-      thumbnail:[this.video.thumbnail],
-      tags:[[],[Validators.required]],  //似乎是只有对象属性才会拷贝引用地址,之前用this.video.tags直接拷贝了引用,但是用this.tags似乎是深拷贝
+      stars:[[]],
+      thumbnail:[this.video.thumbnail,[Validators.required]],
+      tags:[[]],  //似乎是只有对象属性才会拷贝引用地址,之前用this.video.tags直接拷贝了引用,但是用this.tags似乎是深拷贝
       path:[this.video.path],
     })
+
   }
 
+  ngAfterViewInit() {
+    // console.log(this.starInputElement)
+    // this.arrayTypeDataInputElementDict['stars'] = this.starInputElement;
+    // this.arrayTypeDataInputElementDict['tags'] = this.tagInputElement;
+  }
 
 
 // ▼-----------------------------------------tag处理-----------------------------------------------------------▼
-  sliceTagName(tag: string): string {
-    const isLongTag = tag.length > 20;
-    return isLongTag ? `${tag.slice(0, 20)}...` : tag;
-  }
-
-  handleClose(removedTag: {}): void {
-    this.tags = this.tags.filter(tag => tag !== removedTag);
-  }
-
-  showTagInput(): void {
-    this.tagInputVisible = true;
-    setTimeout(() => {
-      this.tagInputElement?.nativeElement.focus();
-    }, 10);
-  }
-
-  handleTagInputConfirm(): void {
-    if (this.tagInputValue && this.tags.indexOf(this.tagInputValue) === -1) {
-      this.tags = [...this.tags, this.tagInputValue];
-    }
-    this.tagInputValue = '';
-    this.tagInputVisible = false;
-  }
+//   sliceTagName(tag: string): string {
+//     const isLongTag = tag.length > 20;
+//     return isLongTag ? `${tag.slice(0, 20)}...` : tag;
+//   }
+//
+//   handleClose(removedTag: {}): void {
+//     this.tags = this.tags.filter(tag => tag !== removedTag);
+//   }
+//
+//   showTagInput(): void {
+//     this.tagInputVisible = true;
+//     setTimeout(() => {
+//       this.tagInputElement?.nativeElement.focus();
+//     }, 10);
+//   }
+//
+//   handleTagInputConfirm(): void {
+//     if (this.tagInputValue && this.tags.indexOf(this.tagInputValue) === -1) {
+//       this.tags = [...this.tags, this.tagInputValue];
+//     }
+//     this.tagInputValue = '';
+//     this.tagInputVisible = false;
+//   }
 // ▲-------------------------------------------------▲---------------------------------------------------------▲
 
 
 
 // ▼-----------------------------------------star处理-----------------------------------------------------------▼
-  sliceStarName(star: string): string {
-    const isLongTag = star.length > 20;
-    return isLongTag ? `${star.slice(0, 20)}...` : star;
+//   sliceStarName(star: string): string {
+//     const isLongTag = star.length > 20;
+//     return isLongTag ? `${star.slice(0, 20)}...` : star;
+//   }
+//
+//   showStarInput(): void {
+//     this.starInputVisible = true;
+//     setTimeout(() => {
+//       this.starInputElement?.nativeElement.focus();
+//     }, 10);
+//   }
+//
+//   handleStarInputConfirm() {
+//     if (this.starInputValue && this.stars.indexOf(this.starInputValue) === -1) {
+//       this.stars = [...this.stars, this.starInputValue];
+//     }
+//     this.starInputValue = '';
+//     this.starInputVisible = false;
+//   }
+//
+//   handleStarInputClose() {
+//     this.starInputValue = '';
+//     this.starInputVisible = false;
+//   }
+//
+//   removeStar(index:number) {
+//     this.stars.splice(index,1);
+//   }
+// ▲-------------------------------------------------▲---------------------------------------------------------▲
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ▼-----------------------------------------数组型数据通用式处理函数----------------------------------------------▼
+  sliceDataName(data: string): string {  //tag和link通用
+    const isLongData = data.length > 20;
+    return isLongData ? `${data.slice(0, 20)}...` : data;
   }
 
-  showStarInput(): void {
-    this.starInputVisible = true;
+  handleTagClose(field:string,removedTag: {}): void { //tag专用
+    this.arrayTypeDataDict[field] = this.arrayTypeDataDict[field].filter((tag:string) => tag !== removedTag);
+  }
+
+  showDataInput(field:string): void { //tag和link通用
+    this.arrayTypeDataInputVisibleDict[field] = true;
     setTimeout(() => {
-      this.starInputElement?.nativeElement.focus();
+      this.arrayTypeDataInputElementDict[field]?.nativeElement.focus();
     }, 10);
   }
 
-  handleStarInputConfirm() {
-    if (this.starInputValue && this.stars.indexOf(this.starInputValue) === -1) {
-      this.stars = [...this.stars, this.starInputValue];
+  handleDataInputConfirm(field:string): void { //tag和link通用
+    if (this.arrayTypeDataInputValueDict[field] && this.arrayTypeDataDict[field].indexOf(this.arrayTypeDataInputValueDict[field]) === -1) {
+      this.arrayTypeDataDict[field] = [...this.arrayTypeDataDict[field], this.arrayTypeDataInputValueDict[field]];
     }
-    this.starInputValue = '';
-    this.starInputVisible = false;
+    this.arrayTypeDataInputValueDict[field] = '';
+    this.arrayTypeDataInputVisibleDict[field] = false;
   }
 
-  handleStarInputClose() {
-    this.starInputValue = '';
-    this.starInputVisible = false;
+  handleLinkInputClose(field:string) { //link专用
+    this.arrayTypeDataInputValueDict[field] = '';
+    this.arrayTypeDataInputVisibleDict[field] = false;
   }
 
-  removeStar(index:number) {
-    this.stars.splice(index,1);
+  removeLink(field:string,index:number) { //link专用
+    this.arrayTypeDataDict[field].splice(index,1);
   }
 // ▲-------------------------------------------------▲---------------------------------------------------------▲
+//                                                    |
+//                                                    |
+//                                                    |
+//                                                    |
+// ▼-----------------------------------------数组型数据通用式修改函数-----------------------------------------------▼
+  patchArrayTypeData(): void {
+    for (let field in this.arrayTypeDataDict) {
+      this.videoEditingForm.get(field)?.patchValue(this.arrayTypeDataDict[field]);
+    }
+  }
+// ▲-------------------------------------------------▲---------------------------------------------------------▲
+
+
 
 
 
@@ -161,9 +260,13 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
   }
 
   switchEdit(): void {
-    this.stars = JSON.parse(JSON.stringify(this.video.stars))
-    this.tags = JSON.parse(JSON.stringify(this.video.tags))
-    if (this.editMode) { //这个if主要是为了节省资源，不写也行
+    // this.stars = JSON.parse(JSON.stringify(this.video.stars))
+    // this.tags = JSON.parse(JSON.stringify(this.video.tags))
+    for (let field in this.arrayTypeDataDict) { //不遍历video而是arrayTypeDataDict为了节省资源
+      this.arrayTypeDataDict[field] = JSON.parse(JSON.stringify(this.video[field as keyof Video]));
+    }
+
+    if (this.editMode) { //这个if主要是为了节省资源(少更新一次普通类型的数据)，不写也行
       // for (const i in this.videoEditingForm.controls) {
       //   this.videoEditingForm.controls[i].patchValue(this.video[i as keyof Video])
       // }
@@ -174,42 +277,53 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
     }
   }
 
-  patValueAndValidateStars(): void {
-    this.videoEditingForm.get('stars')?.patchValue(this.stars);
-    if (this.video.stars.length !== this.stars.length) {
-      this.videoEditingForm.get('stars')?.markAsDirty();
-    } else {
-      for (let i=0; i < this.stars.length; i++) {
-        if (this.video.stars[i] !== this.stars[i]) {
-          this.videoEditingForm.get('stars')?.markAsDirty();
-          break; //return也行
-        }
-      }
-    }
-  }
-
-  patValueAndValidateTags(): void {
-    this.videoEditingForm.get('tags')?.patchValue(this.tags);
-    if (this.video.tags.length !== this.tags.length) {
-      this.videoEditingForm.get('tags')?.markAsDirty();
-    } else {
-      for (let i=0; i < this.tags.length; i++) {
-        if (this.video.tags[i] !== this.tags[i]) {
-          this.videoEditingForm.get('tags')?.markAsDirty();
-          break; //return也行
-        }
-      }
-    }
-  }
+  // patValueAndValidateStars(): void {
+  //   this.videoEditingForm.get('stars')?.patchValue(this.stars);
+  //   if (this.video.stars.length !== this.stars.length) {
+  //     this.videoEditingForm.get('stars')?.markAsDirty();
+  //   } else {
+  //     for (let i=0; i < this.stars.length; i++) {
+  //       if (this.video.stars[i] !== this.stars[i]) {
+  //         this.videoEditingForm.get('stars')?.markAsDirty();
+  //         break; //return也行
+  //       }
+  //     }
+  //   }
+  // }
+  //
+  // patValueAndValidateTags(): void {
+  //   this.videoEditingForm.get('tags')?.patchValue(this.tags);
+  //   if (this.video.tags.length !== this.tags.length) {
+  //     this.videoEditingForm.get('tags')?.markAsDirty();
+  //   } else {
+  //     for (let i=0; i < this.tags.length; i++) {
+  //       if (this.video.tags[i] !== this.tags[i]) {
+  //         this.videoEditingForm.get('tags')?.markAsDirty();
+  //         break; //return也行
+  //       }
+  //     }
+  //   }
+  // }
 
   saveEditedForm(): void {
     console.log('haha')
     //绑定到input这类简单输入组件的数据如title等可以自动校验(隐式校验)，但复杂类型的数据如actor、tags等最好手动控制校验
-    this.patValueAndValidateStars()
-    this.patValueAndValidateTags()
-    for (const i in this.videoEditingForm.controls) {
-      this.videoEditingForm.controls[i].updateValueAndValidity();
+    // this.patValueAndValidateStars()
+    // this.patValueAndValidateTags()
+
+    this.patchArrayTypeData();
+    for (const field in this.arrayTypeDataDict) {
+      const control = this.videoEditingForm.get(field)!
+      control.setValidators([
+        Validators.required,
+        ArrayDataTypeValidator(this.arrayTypeDataDict[field]),
+      ])
+      control.updateValueAndValidity();
     }
+
+    // for (const i in this.videoEditingForm.controls) {
+    //   this.videoEditingForm.controls[i].updateValueAndValidity();
+    // }
 
     if (this.videoEditingForm.valid) {
       // this.video.title = this.videoEditingForm.value.title;
@@ -223,12 +337,13 @@ export class VideoDetailComponent implements OnInit,OnDestroy {
       } else {
         this.modified = false;
       }
-    } else {
-      for (const i in this.videoEditingForm.controls) {
-        this.videoEditingForm.controls[i].markAsTouched();
-        this.videoEditingForm.controls[i].updateValueAndValidity();
-      }
     }
+    // else {
+    //   for (const i in this.videoEditingForm.controls) {
+    //     this.videoEditingForm.controls[i].markAsTouched();
+    //     this.videoEditingForm.controls[i].updateValueAndValidity();
+    //   }
+    // }
   }
 
   applyChange(): void {

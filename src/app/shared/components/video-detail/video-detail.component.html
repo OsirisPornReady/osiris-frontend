@@ -49,40 +49,49 @@
               <nz-form-control class="form-item-link">
                 <div class="form-item-data-link-wrap-div">
                   <a
-                    *ngFor="let star of stars;let i = index"
+                    *ngFor="let star of arrayTypeDataDict['stars'];let i = index"
                     href="javascript:;"
                     class="form-item-data-link">
                     {{star}}
-                    <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeStar(i)" class="form-item-data-remove-link"></i>
+                    <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeLink('stars',i)" class="form-item-data-remove-link"></i>
                   </a>
                   <div *ngIf="editMode" style="display: inline-block">
-                    <ng-container *ngIf="!starInputVisible">
+                    <ng-container *ngIf="!arrayTypeDataInputVisibleDict['stars']">
                       <a href="javascript:;" class="form-item-data-new-link">
-                        <i nz-icon nzType="plus" (click)="showStarInput()"></i>
+                        <i nz-icon nzType="plus" (click)="showDataInput('stars')"></i>
                       </a>
                     </ng-container>
-                    <nz-input-group *ngIf="starInputVisible" [nzSuffix]="starInputSuffix" [nzCompact]="true">
+                    <nz-input-group *ngIf="arrayTypeDataInputVisibleDict['stars']" [nzSuffix]="starInputSuffix" [nzCompact]="true">
                       <input
                         #starInputElement
                         nz-input
                         nzSize="small"
                         type="text"
-                        [(ngModel)]="starInputValue"
+                        [(ngModel)]="arrayTypeDataInputValueDict['stars']"
                         style="width: 78px;height: 22px;"
-                        (blur)="handleStarInputConfirm()"
-                        (keydown.enter)="handleStarInputConfirm()"
+                        (blur)="handleDataInputConfirm('stars')"
+                        (keydown.enter)="handleDataInputConfirm('stars')"
                         [ngModelOptions]="{standalone: true}"
                         nzBorderless
                       />
                     </nz-input-group>
                     <ng-template #starInputSuffix>
                       <a href="javascript:;">
-                        <i nz-icon nzType="close" (click)="handleStarInputClose()"></i>
+                        <i nz-icon nzType="close" (click)="handleLinkInputClose('stars')"></i>
                       </a>
                     </ng-template>
                   </div>
                 </div>
+              </nz-form-control>
+            </nz-form-item >
 
+            <nz-form-item class="form-item">
+              <nz-form-label nzFor="title" class="form-item-data-label">time</nz-form-label>
+              <nz-form-control class="form-item-data-date">
+                <div [hidden]="editMode" class="form-item-data-date-div">
+                  {{video.title}}
+                </div>
+                <nz-date-picker [hidden]="!editMode" [nzDisabled]="!editMode"></nz-date-picker>
               </nz-form-control>
             </nz-form-item >
 
@@ -92,15 +101,15 @@
                 <div class="form-item-data-tag-wrap-div">
                   <nz-tag
                     [class]="!editMode ? 'form-item-data-tag' : ''"
-                    *ngFor="let tag of tags; let i = index"
+                    *ngFor="let tag of arrayTypeDataDict['tags']; let i = index"
                     [nzColor]="'volcano'"
                     [nzMode]="editMode ? 'closeable' : 'default'"
-                    (nzOnClose)="handleClose(tag)"
+                    (nzOnClose)="handleTagClose('tags',tag)"
                   >
-                    {{ sliceTagName(tag) }}
+                    {{ sliceDataName(tag) }}
                   </nz-tag>
                   <div *ngIf="editMode" style="display: inline-block">
-                    <nz-tag *ngIf="!tagInputVisible" class="form-item-data-new-tag" nzNoAnimation (click)="showTagInput()">
+                    <nz-tag *ngIf="!arrayTypeDataInputVisibleDict['tags']" class="form-item-data-new-tag" nzNoAnimation (click)="showDataInput('tags')">
                       <i nz-icon nzType="plus"></i>
                       New Tag
                     </nz-tag>
@@ -108,12 +117,12 @@
                       #tagInputElement
                       nz-input
                       nzSize="small"
-                      *ngIf="tagInputVisible"
+                      *ngIf="arrayTypeDataInputVisibleDict['tags']"
                       type="text"
-                      [(ngModel)]="tagInputValue"
+                      [(ngModel)]="arrayTypeDataInputValueDict['tags']"
                       style="width: 78px;height: 22px"
-                      (blur)="handleTagInputConfirm()"
-                      (keydown.enter)="handleTagInputConfirm()"
+                      (blur)="handleDataInputConfirm('tags')"
+                      (keydown.enter)="handleDataInputConfirm('tags')"
                       [ngModelOptions]="{standalone: true}"
                     />
                   </div>
