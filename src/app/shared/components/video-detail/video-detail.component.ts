@@ -311,12 +311,13 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     // this.patValueAndValidateStars()
     // this.patValueAndValidateTags()
 
+
     this.patchArrayTypeData();
     for (const field in this.arrayTypeDataDict) {
       const control = this.videoEditingForm.get(field)!
       control.setValidators([
         Validators.required,
-        ArrayDataTypeValidator(this.arrayTypeDataDict[field]),
+        ArrayDataTypeValidator(this.video[field as keyof Video]),
       ])
       control.updateValueAndValidity();
     }
