@@ -1,25 +1,29 @@
-<p>login works!</p>
+<div class="background-div">
 
-<form nz-form [formGroup]="loginForm">
+  <nz-card class="login-card">
 
-  <nz-form-item>
-    <nz-form-label class="test" nzFor="username">username</nz-form-label>
-    <nz-form-control>
-      <input nz-input type="text" nzSize="default" id="username">
-    </nz-form-control>
-  </nz-form-item>
+    <form nz-form [formGroup]="loginForm" class="login-form">
+      <nz-form-item>
+        <nz-form-label class="test" nzFor="username">username</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="text" nzSize="default" id="username">
+        </nz-form-control>
+      </nz-form-item>
 
-  <nz-form-item>
-    <nz-form-label>password</nz-form-label>
-    <nz-form-control>
-      <input nz-input type="password" nzSize="default">
-    </nz-form-control>
-  </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>password</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="password" nzSize="default">
+        </nz-form-control>
+      </nz-form-item>
 
-  <nz-form-item>
-    <nz-form-control>
-      <button nz-button type="submit" nzType="primary">login</button>
-    </nz-form-control>
-  </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button type="submit" nzType="primary">login</button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
 
-</form>
+  </nz-card>
+
+</div>

@@ -12,7 +12,7 @@ export function ArrayDataTypeValidator(videoArrayData:any): ValidatorFn {    //�
       return { ArrayDataControlEmptyError: true };
     }
 
-    if (arrayDataControlValue.length !== videoArrayData.length) {
+    if (arrayDataControlValue.length !== videoArrayData.length) { //数组长度不同直接dirty
       control.markAsDirty();
     } else { //数组长度相同的情况
       for (let i=0; i < videoArrayData.length; i++) {

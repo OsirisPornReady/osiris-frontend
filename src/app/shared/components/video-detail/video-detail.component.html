@@ -11,8 +11,8 @@
     </nz-switch>
   </nz-header>
 
-  <nz-content class="outer-layout">
-    <div class="video-detail">
+  <nz-content class="outer-layout outer-layout-content">
+    <div class="video-detail-content">
       <form nz-form id="videoEditingForm" [formGroup]="videoEditingForm" class="video-editing-form" (ngSubmit)="saveEditedForm()">
         <nz-layout class="form-layout">
           <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth">
@@ -33,6 +33,7 @@
 <!--          [nzSpan]="4"-->
 <!--          [nzSpan]="14"-->
 
+<!--          nzformlabel在缩放最小时会另起一行，但是原生的太麻烦，暂且不考虑过于极端的情况吧-->
           <nz-content class="form-data-wrapper">
             <nz-form-item class="form-item">
               <nz-form-label nzFor="title" class="form-item-data-label">title</nz-form-label>

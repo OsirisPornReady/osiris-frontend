@@ -61,8 +61,8 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   editMode:boolean = false;
   loading:boolean = false;
   modified:boolean = false;
-  thumbnailWidth = "500px";
-
+  thumbnailWidth = "60%";
+  // // 750px
 
   constructor(
     private videoService: VideoService,
