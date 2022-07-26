@@ -37,6 +37,9 @@ import {NzDividerModule} from "ng-zorro-antd/divider";
 import {NzCardModule} from "ng-zorro-antd/card";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
+import {NzBadgeModule} from "ng-zorro-antd/badge";
+import {NzAvatarModule} from "ng-zorro-antd/avatar";
+import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 
 
 
@@ -73,6 +76,9 @@ import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
     NzCardModule,
     NzFormModule,
     NzDatePickerModule,
+    NzBadgeModule,
+    NzAvatarModule,
+    NzDropDownModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },

@@ -9,6 +9,7 @@ import { LinkValidator } from "../../validators/link.validator";
 import { TagValidator } from "../../validators/tag.validator";
 import { ArrayDataTypeValidator } from "../../validators/arrayDataType.validator";
 import {filter} from "rxjs/operators";
+import { DatePipe } from "@angular/common";
 
 
 @Component({
@@ -19,13 +20,7 @@ import {filter} from "rxjs/operators";
 })
 export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
 
-  role:string = 'admin';
-
-  testFlag = false;
-
-  // testArray = new Array(100);
-
-  @Input() selectedVideoId!:number;
+  @Input() VideoId!:number;
 
   // @ViewChild('tagInputElement', { static: false }) tagInputElement?: ElementRef;
   // @ViewChild('starInputElement', { static: false }) starInputElement?: ElementRef;
@@ -58,11 +53,13 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   videoSubscription?:any;
   videoEditingForm!:FormGroup;
 
+  isImageFold:boolean = false;
   editMode:boolean = false;
   loading:boolean = false;
   modified:boolean = false;
   thumbnailWidth = "60%";
   // // 750px
+  dateFormat = 'yyyy/MM/dd';
 
   constructor(
     private videoService: VideoService,
@@ -71,7 +68,6 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.video);
     console.log('init');
     // const videoObserver = {  //其实就是定义了一个处理推送信息的模式
     //   next: (v:any) =>{
@@ -114,14 +110,15 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
         }
       }
     )
-    this.videoService.pushVideo(this.selectedVideoId);
+    this.videoService.pushVideo(this.VideoId);
 
     this.videoEditingForm = this.fb.group({  //复杂控件要自己实现一个model处理层，这里仅供简单的标识和非空校验
       title:[this.video.title,[Validators.required]],
       stars:[[]],
-      thumbnail:[this.video.thumbnail,[Validators.required]],
+      thumbnail:[this.video.thumbnail],
       tags:[[]],  //似乎是只有对象属性才会拷贝引用地址,之前用this.video.tags直接拷贝了引用,但是用this.tags似乎是深拷贝
       path:[this.video.path],
+      date:[this.video.date],
     })
 
   }
@@ -277,6 +274,10 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     }
   }
 
+  foldImage() {
+    this.isImageFold = !this.isImageFold;
+  }
+
   // patValueAndValidateStars(): void {
   //   this.videoEditingForm.get('stars')?.patchValue(this.stars);
   //   if (this.video.stars.length !== this.stars.length) {
@@ -347,8 +348,13 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     // }
   }
 
+  delete() {
+    this.videoService.deleteVideo(this.VideoId);
+    this.modalRef.destroy();
+  }
+
   applyChange(): void {
-    this.videoService.setVideo(this.selectedVideoId,this.video);
+    this.videoService.setVideo(this.VideoId,this.video);
     this.loading = true;
     setTimeout(() => {
       this.loading = false;

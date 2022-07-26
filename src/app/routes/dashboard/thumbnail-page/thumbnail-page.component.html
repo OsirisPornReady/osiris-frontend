@@ -1,12 +1,24 @@
 <div class="virtual-scroll-wrapper" (scroll)="onScroll($event)">
   <div #virtualScrollWrapper class="virtual-scroll">
     <div #thumbnails nz-row class="thumbnail-grid">
-      <div nz-col [nzSpan]="3" *ngFor="let video of showItem">
-        <nz-card class="thumbnail-card" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="selectVideo(video.id)">
+      <div nz-col [nzSpan]="3" *ngFor="let video of showItem;let i = index">
+        <nz-card class="thumbnail-card" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="selectVideo(i+startIndex,video)">
           <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
         </nz-card>
         <ng-template #coverTemplate>
-          <img style="display: block" [src]=video.thumbnail>
+          <nz-badge *ngIf="isQuickDelete" [nzCount]="deleteIconTemplate">
+            <img style="display: block" [src]=video.thumbnail>
+          </nz-badge>
+          <ng-template #deleteIconTemplate>
+            <i
+              nz-icon
+              nzType="close-circle"
+              class="ant-scroll-number-custom-component"
+              style="color: #f5222d;font-size: 20px;z-index: 999"
+              (click)="quickDelete($event,i+startIndex)"></i>
+          </ng-template>
+
+          <img *ngIf="!isQuickDelete" style="display: block" [src]=video.thumbnail>
         </ng-template>
       </div>
     </div>
@@ -14,7 +26,7 @@
 </div>
 
 
-
+<!--;trackBy: customTB-->
 
 <!--<div class="image-wrapper" (click)="selectVideo(video.id)">-->
 <!--  <img style="display: block" [src]=video.thumbnail>-->

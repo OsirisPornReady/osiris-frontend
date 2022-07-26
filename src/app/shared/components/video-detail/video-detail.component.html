@@ -2,7 +2,7 @@
   <nz-header class="outer-layout outer-layout-header">
     <h5 class="video-title">{{video.title}}</h5>
     <nz-switch
-      *aclIf="role"
+      *aclIf="'update'"
       class="switch-edit-mode"
       [(ngModel)]="editMode"
       nzCheckedChildren="编辑"
@@ -15,7 +15,8 @@
     <div class="video-detail-content">
       <form nz-form id="videoEditingForm" [formGroup]="videoEditingForm" class="video-editing-form" (ngSubmit)="saveEditedForm()">
         <nz-layout class="form-layout">
-          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth">
+<!--          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth">-->
+          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth" nzBreakpoint="md" [nzCollapsedWidth]="1" (nzCollapsedChange)="foldImage()">
             <nz-form-item>
               <nz-form-control>
                 <img
@@ -25,6 +26,7 @@
                   [nzSrc]="video.thumbnail"
                   [nzFallback]="'/assets/imageFallback.png'"
                   alt=""
+                  [hidden]="isImageFold"
                 />
               </nz-form-control>
             </nz-form-item >
@@ -87,12 +89,18 @@
             </nz-form-item >
 
             <nz-form-item class="form-item">
-              <nz-form-label nzFor="title" class="form-item-data-label">time</nz-form-label>
+              <nz-form-label nzFor="title" class="form-item-data-label">date</nz-form-label>
               <nz-form-control class="form-item-data-date">
                 <div [hidden]="editMode" class="form-item-data-date-div">
-                  {{video.title}}
+                  {{ video.date | date:'yyyy-MM-dd' }}
                 </div>
-                <nz-date-picker [hidden]="!editMode" [nzDisabled]="!editMode"></nz-date-picker>
+                <nz-date-picker
+                  [hidden]="!editMode"
+                  [nzDisabled]="!editMode"
+                  [nzMode]="'date'"
+                  [nzAllowClear]="true"
+                  [nzFormat]="dateFormat"
+                  formControlName="date"></nz-date-picker>
               </nz-form-control>
             </nz-form-item >
 
@@ -155,17 +163,19 @@
   </nz-content>
 
   <nz-footer class="outer-layout">
+
     <nz-space [nzSize]="15">
-      <ng-container *aclIf="role">
+      <ng-container *aclIf="'update'">
         <button *nzSpaceItem nz-button type="button" [disabled]="!modified" [nzLoading]="loading" nzType="primary" (click)="applyChange()">
           <i nz-icon nzType="poweroff"></i>
           提交修改
         </button>
       </ng-container>
+
       <button *nzSpaceItem nz-button type="button" nzType="default" (click)="goBack()">返回</button>
     </nz-space>
 
-    <ng-container *aclIf="role">
+    <ng-container *aclIf="'update'">
       <button
         nz-button
         *ngIf="editMode"
@@ -173,9 +183,24 @@
         form="videoEditingForm"
         nzType="primary"
         class="save-form-button">
-          保存修改
+        保存修改
       </button>
     </ng-container>
+
+    <ng-container *aclIf="'delete'">
+      <button
+        nz-button
+        *ngIf="editMode"
+        type="button"
+        form="videoEditingForm"
+        nzType="primary"
+        nzDanger
+        class="delete-video-button"
+        (click)="delete()">
+        删除
+      </button>
+    </ng-container>
+
   </nz-footer>
 </nz-layout>
 

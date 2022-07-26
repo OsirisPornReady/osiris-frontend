@@ -11,34 +11,105 @@ export class UserService {
 
   userlist: User[] = [
     {
+      username:"admin",
+      password:"123456",
+      authority:{
+        create:true,
+        retrieve:true,
+        update:true,
+        delete:true,
+      },
+      messageCount: 10,
+    },
+    {
       username:"ash",
-      pwd:"123"
+      password:"123",
+      authority:{
+        create:true,
+        retrieve:true,
+        update:true,
+        delete:false,
+      },
+      messageCount: 25,
     },
     {
       username:"jeff",
-      pwd:"456"
+      password:"456",
+      authority:{
+        create:false,
+        retrieve:true,
+        update:true,
+        delete:false,
+      },
+      messageCount: 0,
     },
     {
       username:"kaplan",
-      pwd:"789"
+      password:"789",
+      authority:{
+        create:false,
+        retrieve:true,
+        update:false,
+        delete:false,
+      },
+      messageCount: 100000,
     }
   ]
 
+  _currentUser:any = null;
+  set currentUser(currentUser:any) {
+    localStorage.setItem('currentUser',JSON.stringify(currentUser));
+    console.log('user storaged');
+    this._currentUser = currentUser
+  }
+
+  get currentUser() {
+    const currentUserStr = localStorage.getItem('currentUser')
+    if (currentUserStr) {
+      this._currentUser = JSON.parse(currentUserStr);
+    }
+    return this._currentUser;
+  }
+
   constructor() { }
 
-  validateUser(username:string,pwd:string): number {
-    for(let key in this.userlist) {
-      if(this.userlist[key].username == username && this.userlist[key].pwd == pwd){
-        return Number(key);
+  validateUser(userdata:any): number {
+    try {
+      const username:string = userdata.username;
+      const password:string = userdata.password;
+
+      for (let [index,user] of this.userlist.entries()) {
+        if(user.username == username){
+          if (user.password == password) {
+            this.currentUser = user //直接取引用了，要改可以直接改
+            return index;
+          } else {
+            return -1; //密码错误
+          }
+        }
       }
+      return -2; //没找到符合的user
+    } catch (e) {
+      console.error(e)
+      return -3; //输入的userdata发生了错误
     }
-    return -1;
   }
 
-  getUserInfo(userId:number): any {
-    console.log(userId)
-    return this.userlist[userId];
+  getUserByIndex(index:number): any {
+    return this.userlist[index];
   }
 
+  getCurrentUser(): User | null {
+    return this.currentUser;
+  }
+
+  signIn(userdata:any) {
+    return this.validateUser(userdata);
+  }
+
+  signOut() {
+    localStorage.setItem('lastUser',JSON.stringify(this.currentUser));
+    this.currentUser = null;
+  }
 
 }

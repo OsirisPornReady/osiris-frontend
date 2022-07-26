@@ -1,20 +1,26 @@
 import { Injectable } from '@angular/core';
+import { UserService } from "../user/user.service";
+import {User} from "../../models/user";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AclService {
 
-  constructor() { }
+  currentUser!:User | null;
+
+  constructor(
+    private userService: UserService,
+  ) { }
 
   buttonRoleValidate(aclIf: string): boolean {
-    if (aclIf == 'admin') {
+    this.currentUser = this.userService.getCurrentUser()
+    if (this.currentUser?.authority[aclIf as keyof Object]) {
       return true;
     } else {
       return false;
     }
   }
-
 
 
 }

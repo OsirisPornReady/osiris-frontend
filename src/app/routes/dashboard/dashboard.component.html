@@ -38,12 +38,42 @@
     <nz-header>
       <div class="app-header">
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-            <i class="trigger"
-               nz-icon
-               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-            ></i>
+<!--            <i class="trigger"-->
+<!--               nz-icon-->
+<!--               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"-->
+<!--            ></i>-->
+          <i class="trigger"
+             nz-icon
+             [nzType]="'menu-unfold'"
+             [hidden]="!isCollapsed"
+          ></i>
+          <i class="trigger"
+             nz-icon
+             [nzType]="'menu-fold'"
+             [hidden]="isCollapsed"
+          ></i>
         </span>
         <search-bar></search-bar>
+        <button *aclIf="'create'" nz-button type="button" nzType="primary" class="video-add-button" (click)="addVideo()">add video</button>
+        <nz-switch
+          *aclIf="'delete'"
+          [(ngModel)]="isQuickDelete"
+          nzCheckedChildren="QD"
+          nzUnCheckedChildren="NV"
+          class="quick-delete-switch"
+          (ngModelChange)="switchQuickDelete()">
+        </nz-switch>
+        <nz-badge [nzCount]="user ? user.messageCount : -1" class="user-avatar">
+          <nz-avatar nzIcon="user" [nzShape]="'circle'" nz-dropdown [nzTrigger]="'click'" [nzDropdownMenu]="userMenu" class="user-head"></nz-avatar>
+        </nz-badge>
+        <nz-dropdown-menu #userMenu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item>Your Profile</li>
+            <li nz-menu-item>Your Videos</li>
+            <li nz-menu-item>Settings</li>
+            <li nz-menu-item nzDanger (click)="signOut()">Sign out</li>
+          </ul>
+        </nz-dropdown-menu>
       </div>
     </nz-header>
     <nz-content>

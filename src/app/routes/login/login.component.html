@@ -2,26 +2,33 @@
 
   <nz-card class="login-card">
 
-    <form nz-form [formGroup]="loginForm" class="login-form">
+    <form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="login()">
       <nz-form-item>
-        <nz-form-label class="test" nzFor="username">username</nz-form-label>
-        <nz-form-control>
-          <input nz-input type="text" nzSize="default" id="username">
-        </nz-form-control>
+        <nz-input-group nzPrefixIcon="user">
+          <input type="text" nz-input formControlName="username" placeholder="Username" />
+        </nz-input-group>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label>password</nz-form-label>
-        <nz-form-control>
-          <input nz-input type="password" nzSize="default">
-        </nz-form-control>
+        <nz-input-group nzPrefixIcon="lock">
+          <input type="password" nz-input formControlName="password" placeholder="Password" />
+        </nz-input-group>
       </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-control>
-          <button nz-button type="submit" nzType="primary">login</button>
-        </nz-form-control>
-      </nz-form-item>
+      <div nz-row class="login-form-margin">
+        <div nz-col [nzSpan]="12">
+          <label nz-checkbox formControlName="remember">
+            <span>Remember me</span>
+          </label>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <a class="login-form-forgot">Forgot password</a>
+        </div>
+      </div>
+      <button nz-button class="login-form-button login-form-margin" type="submit" [nzType]="'primary'" [nzLoading]="isLoading">Log in</button>
+      Or
+      <a>register now!</a>
+
     </form>
 
   </nz-card>

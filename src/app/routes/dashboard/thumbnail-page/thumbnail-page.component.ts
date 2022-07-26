@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, Input, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { VideoService } from "../../../service/video/video.service";
 import { Observable, Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { NzModalService } from "ng-zorro-antd/modal";
 import { VideoDetailComponent } from "../../../shared/components/video-detail/video-detail.component";
-
+import { CommonDataService } from "../../../service/common-data/common-data.service";
 
 
 @Component({
@@ -12,53 +12,24 @@ import { VideoDetailComponent } from "../../../shared/components/video-detail/vi
   templateUrl: './thumbnail-page.component.html',
   styleUrls: ['./thumbnail-page.component.less']
 })
-export class ThumbnailPageComponent implements OnInit {
+export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
   @ViewChild('thumbnails', { static:true }) thumbnails?:ElementRef;
   @ViewChild('virtualScrollWrapper', { static:true }) virtualScrollWrapper?:ElementRef;
 
-  videos:any[] = [
-    {
-      id:1,
-      title:'Down Under',
-      thumbnail:'/assets/down under.jpg',
-      author:'Luude',
-    },
-    {
-      id:2,
-      title:'Good Morning',
-      thumbnail:'/assets/Good morning.jpg',
-      author:'Kanye West',
-    },
-    {
-      id:3,
-      title:'Prey',
-      thumbnail:'/assets/prey.jpg',
-      author:'Mick Gordon',
-    },
-    {
-      id:4,
-      title:'Sad Machine',
-      thumbnail:'/assets/sad machine.jpg',
-      author:'Porter Robinson',
-    },
-    {
-      id:5,
-      title:'Snow Crash',
-      thumbnail:'/assets/snow crash.jpg',
-      author:'Mitch Murder',
-    },
-    {
-      id:6,
-      title:'Sakanaction',
-      thumbnail:'/assets/Sakanaction_album_cover.jpg',
-      author: 'サカナクション',
-    }
-  ];
+  videos:any[] = [];
+  set _videos(videos:any) { //videos每次变化都改变一次showItem过于麻烦，不如直接写setter
+    this.videos = videos;
+    this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
+  }
+  videoListSubscription:any;
   modalWidth:number = 1300;
   // isVisible:boolean = false;
   // selectedVideoId?:number;
   // videos:any[] = [];
+  get isQuickDelete() {
+    return this.commonDataService.isQuickDelete;
+  }
 
 
 
@@ -79,13 +50,26 @@ export class ThumbnailPageComponent implements OnInit {
     private videoService: VideoService,
     private modalService: NzModalService,
     private renderer2: Renderer2,
+    private changeDetection: ChangeDetectorRef,
+    private commonDataService: CommonDataService,
   ) { }
+
+//angular7~8时就已经可以自动监测数组变化，不需要另外做处理
+  public customTB(index:any, video:any) { return `${index}-${video.id}`; }
 
   getVideoList() {
 
   }
 
+
   ngOnInit(): void {
+    this.videoListSubscription = this.videoService.videoListStream$.subscribe(
+      (next:any) => {
+        this._videos = next;
+        // this.changeDetection.detectChanges();
+      }
+    )
+    this.videoService.pushVideoList();
 
     const videoNum = this.videos.length
     this.totalHeight = ( Math.floor(videoNum / this.rowNumber) + (videoNum % this.rowNumber > 0 ? 1 : 0) ) * this.itemHeight + 50 ; //考虑到占不满一行的情况下，当前videos能填满几行,增加尾部余量以防最后加载不出来
@@ -141,17 +125,12 @@ export class ThumbnailPageComponent implements OnInit {
     // 3、this.startIndex + this.showNumber > this.videos.length //全取
   }
 
-  selectVideo(id:number) {
-    const test = [1,2,3]
-    console.log(test.slice(0,6))
-    // this.isVisible = true
-    // this.selectedVideoId = id;
-    console.log(id)
-
+  selectVideo(id:number,video:any) {
+    console.log('select video index:',id)
     this.modalService.create({
       nzContent:VideoDetailComponent,
       nzComponentParams: {
-        selectedVideoId:id,
+        VideoId:id,
       },
       nzWidth:this.modalWidth,
       nzFooter:null,
@@ -165,5 +144,18 @@ export class ThumbnailPageComponent implements OnInit {
   // handleCancel() {
   //   this.isVisible = false;
   // }
+
+  quickDelete(e:any,index:number) {
+    e.stopPropagation();
+    this.videoService.deleteVideo(index);
+  }
+
+  ngOnDestroy() {
+    this.videoListSubscription.unsubscribe();
+  }
+
+
+
+
 
 }
