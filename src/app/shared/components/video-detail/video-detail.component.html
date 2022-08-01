@@ -1,4 +1,4 @@
-<nz-layout>
+<nz-layout *ngIf="!videoNotFound; else emptyContent">
   <nz-header class="outer-layout outer-layout-header">
     <h5 class="video-title">{{video.title}}</h5>
     <nz-switch
@@ -203,6 +203,10 @@
 
   </nz-footer>
 </nz-layout>
+
+<ng-template #emptyContent>
+  <nz-empty></nz-empty>
+</ng-template>
 
 
 <!--  按下回车 与提交表单按钮；当输入框是多个时。-->

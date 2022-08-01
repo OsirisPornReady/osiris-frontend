@@ -21,4 +21,13 @@ export class Video {
     this.path = path;
     this.date = date;
   }
+
+  static toVideo(obj:any): Video {
+    let video = new Video();
+    for (let prop in obj) {
+      // @ts-ignore
+      video[prop as keyof Video] = JSON.parse(JSON.stringify(obj[prop]));
+    }
+    return video;
+  }
 }

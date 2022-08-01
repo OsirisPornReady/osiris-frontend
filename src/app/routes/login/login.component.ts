@@ -39,9 +39,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login() {
+  async login() {
     this.isLoading = true
-    const signInRes = this.userService.signIn(this.loginForm.value)
+    const signInRes = await this.userService.signIn(this.loginForm.value)
+    console.log(signInRes)
     if (signInRes >= 0) {
       this.nzMessageService.success('登录成功');
       this.isLoading = false;
@@ -51,7 +52,7 @@ export class LoginComponent implements OnInit {
         this.nzMessageService.info('密码错误');
       } else if (signInRes == -2) {
         this.nzMessageService.info('不存在的用户');
-      } else if (signInRes == -3) {
+      } else if (signInRes == -3) { //其实不需要-3，传输发生错误就直接没值了，直接else就行，或者try...catch
         this.nzMessageService.error('用户信息传输发生错误');
       }
       this.isLoading = false;

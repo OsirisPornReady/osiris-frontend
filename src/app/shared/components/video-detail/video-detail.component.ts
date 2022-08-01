@@ -52,6 +52,8 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   video!:Video;
   videoSubscription?:any;
   videoEditingForm!:FormGroup;
+  videoNotFound:boolean = false;
+
 
   isImageFold:boolean = false;
   editMode:boolean = false;
@@ -61,57 +63,53 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   // // 750px
   dateFormat = 'yyyy/MM/dd';
 
+
   constructor(
     private videoService: VideoService,
     private fb:FormBuilder,
     private modalRef: NzModalRef,
   ) { }
 
+
   ngOnInit(): void {
     console.log('init');
-    // const videoObserver = {  //其实就是定义了一个处理推送信息的模式
-    //   next: (v:any) =>{
-    //     this.video = v;
-    //     this.tags = v.tags;
-    //     console.log(this.video)
+    // this.videoSubscription = this.videoService.videoStream$.subscribe(
+    //   (next:any) => {  //调用error会中断流传输,所以必须为any,即使为错误也要用next()传回
+    //     if (next instanceof Video) {
+    //       // this.video = next; //深拷贝问题，在成型的前后端分离项目上问题不是很大，但在前端调试的时候(因为用的service中的假数据)如果直接对object赋值会产生将本地数据浅拷贝到service中的原数据上的问题
+    //       this.video = JSON.parse(JSON.stringify(next)); //将当前组件上的数据与service的数据隔离开
+    //       for (let field in this.video) { //复杂数据类型的中间层
+    //         if (this.video[field as keyof Video] instanceof Array) {
+    //           this.arrayTypeDataInputVisibleDict[field] = false;
+    //           this.arrayTypeDataInputValueDict[field] = ''
+    //           this.arrayTypeDataDict[field] = JSON.parse(JSON.stringify(this.video[field as keyof Video]));
+    //         }
+    //       }
+    //       console.log('视频信息:',this.video)
+    //     }
     //   }
-    // }
-    // this.videoSubscription = this.videoService.videoStream$.subscribe(videoObserver)
-    this.videoSubscription = this.videoService.videoStream$.subscribe(
-      (next:any) => {  //调用error会中断流传输,所以必须为any,即使为错误也要用next()传回
-        if (next instanceof Video) {
-          // this.video = next; //深拷贝问题，在成型的前后端分离项目上问题不是很大，但在前端调试的时候(因为用的service中的假数据)如果直接对object赋值会产生将本地数据浅拷贝到service中的原数据上的问题
-          // this.video = new Video(
-          //   next.title,
-          //   next.actor,
-          //   next.thumbnail,
-          //   next.tags,
-          //   next.path,
-          // )
+    // )
+    // this.videoService.pushVideo(this.VideoId);
 
-          // this.video = new Video();
-          // Object.assign(this.video,next);
+    let next: Video | null = this.videoService.getVideo(this.VideoId);
+    if (next) { //初始化当前video的值
+      this.video = next
+    } else {
+      this.videoNotFound = true;
+      return;
+    }
 
-          this.video = JSON.parse(JSON.stringify(next)); //将当前组件上的数据与service的数据隔离开
-          for (let field in this.video) { //复杂数据类型的中间层
-            if (this.video[field as keyof Video] instanceof Array) {
-              this.arrayTypeDataInputVisibleDict[field] = false;
-              this.arrayTypeDataInputValueDict[field] = ''
-              this.arrayTypeDataDict[field] = JSON.parse(JSON.stringify(this.video[field as keyof Video]));
-            }
-          }
-
-
-
-
-          // this.stars = JSON.parse(JSON.stringify(this.video.stars)) //将动态表单的驱动数据与当前组件的数据隔离开。
-          // this.tags = JSON.parse(JSON.stringify(this.video.tags)) //将动态表单的驱动数据与当前组件的数据隔离开。
-          console.log('视频信息:',this.video)
-        }
+    //初始化复杂类型容器
+    for (let field in this.video) { //复杂数据类型的中间层
+      if (this.video[field as keyof Video] instanceof Array) {
+        this.arrayTypeDataInputVisibleDict[field] = false;
+        this.arrayTypeDataInputValueDict[field] = ''
+        this.arrayTypeDataDict[field] = JSON.parse(JSON.stringify(this.video[field as keyof Video]));
       }
-    )
-    this.videoService.pushVideo(this.VideoId);
+    }
+    console.log('视频信息:',this.video)
 
+    //初始化响应式表单控件
     this.videoEditingForm = this.fb.group({  //复杂控件要自己实现一个model处理层，这里仅供简单的标识和非空校验
       title:[this.video.title,[Validators.required]],
       stars:[[]],
@@ -121,84 +119,15 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
       date:[this.video.date],
     })
 
+
   }
+
 
   ngAfterViewInit() {
     // console.log(this.starInputElement)
     // this.arrayTypeDataInputElementDict['stars'] = this.starInputElement;
     // this.arrayTypeDataInputElementDict['tags'] = this.tagInputElement;
   }
-
-
-// ▼-----------------------------------------tag处理-----------------------------------------------------------▼
-//   sliceTagName(tag: string): string {
-//     const isLongTag = tag.length > 20;
-//     return isLongTag ? `${tag.slice(0, 20)}...` : tag;
-//   }
-//
-//   handleClose(removedTag: {}): void {
-//     this.tags = this.tags.filter(tag => tag !== removedTag);
-//   }
-//
-//   showTagInput(): void {
-//     this.tagInputVisible = true;
-//     setTimeout(() => {
-//       this.tagInputElement?.nativeElement.focus();
-//     }, 10);
-//   }
-//
-//   handleTagInputConfirm(): void {
-//     if (this.tagInputValue && this.tags.indexOf(this.tagInputValue) === -1) {
-//       this.tags = [...this.tags, this.tagInputValue];
-//     }
-//     this.tagInputValue = '';
-//     this.tagInputVisible = false;
-//   }
-// ▲-------------------------------------------------▲---------------------------------------------------------▲
-
-
-
-// ▼-----------------------------------------star处理-----------------------------------------------------------▼
-//   sliceStarName(star: string): string {
-//     const isLongTag = star.length > 20;
-//     return isLongTag ? `${star.slice(0, 20)}...` : star;
-//   }
-//
-//   showStarInput(): void {
-//     this.starInputVisible = true;
-//     setTimeout(() => {
-//       this.starInputElement?.nativeElement.focus();
-//     }, 10);
-//   }
-//
-//   handleStarInputConfirm() {
-//     if (this.starInputValue && this.stars.indexOf(this.starInputValue) === -1) {
-//       this.stars = [...this.stars, this.starInputValue];
-//     }
-//     this.starInputValue = '';
-//     this.starInputVisible = false;
-//   }
-//
-//   handleStarInputClose() {
-//     this.starInputValue = '';
-//     this.starInputVisible = false;
-//   }
-//
-//   removeStar(index:number) {
-//     this.stars.splice(index,1);
-//   }
-// ▲-------------------------------------------------▲---------------------------------------------------------▲
-
-
-
-
-
-
-
-
-
-
-
 
 
 // ▼-----------------------------------------数组型数据通用式处理函数----------------------------------------------▼
@@ -249,12 +178,11 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
 
 
 
-
-
   ngOnDestroy(): void {
     console.log('哈,已上天堂了')
-    this.videoSubscription.unsubscribe();
+    // this.videoSubscription.unsubscribe();
   }
+
 
   switchEdit(): void {
     // this.stars = JSON.parse(JSON.stringify(this.video.stars))
@@ -274,45 +202,14 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     }
   }
 
+
   foldImage() {
     this.isImageFold = !this.isImageFold;
   }
 
-  // patValueAndValidateStars(): void {
-  //   this.videoEditingForm.get('stars')?.patchValue(this.stars);
-  //   if (this.video.stars.length !== this.stars.length) {
-  //     this.videoEditingForm.get('stars')?.markAsDirty();
-  //   } else {
-  //     for (let i=0; i < this.stars.length; i++) {
-  //       if (this.video.stars[i] !== this.stars[i]) {
-  //         this.videoEditingForm.get('stars')?.markAsDirty();
-  //         break; //return也行
-  //       }
-  //     }
-  //   }
-  // }
-  //
-  // patValueAndValidateTags(): void {
-  //   this.videoEditingForm.get('tags')?.patchValue(this.tags);
-  //   if (this.video.tags.length !== this.tags.length) {
-  //     this.videoEditingForm.get('tags')?.markAsDirty();
-  //   } else {
-  //     for (let i=0; i < this.tags.length; i++) {
-  //       if (this.video.tags[i] !== this.tags[i]) {
-  //         this.videoEditingForm.get('tags')?.markAsDirty();
-  //         break; //return也行
-  //       }
-  //     }
-  //   }
-  // }
 
   saveEditedForm(): void {
-    console.log('haha')
     //绑定到input这类简单输入组件的数据如title等可以自动校验(隐式校验)，但复杂类型的数据如actor、tags等最好手动控制校验
-    // this.patValueAndValidateStars()
-    // this.patValueAndValidateTags()
-
-
     this.patchArrayTypeData();
     for (const field in this.arrayTypeDataDict) {
       const control = this.videoEditingForm.get(field)!
@@ -323,14 +220,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
       control.updateValueAndValidity();
     }
 
-    // for (const i in this.videoEditingForm.controls) {
-    //   this.videoEditingForm.controls[i].updateValueAndValidity();
-    // }
-
     if (this.videoEditingForm.valid) {
-      // this.video.title = this.videoEditingForm.value.title;
-      // this.video.actor[0] = this.videoEditingForm.value.actor;
-      // Object.assign(this.video,this.videoEditingForm.value);
       this.video = JSON.parse(JSON.stringify(this.videoEditingForm.value)); //这里的video就起到interface的作用了，只验证属性类型
       console.log('保存表单:',this.videoEditingForm)
       this.editMode = false;
@@ -348,10 +238,12 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     // }
   }
 
+
   delete() {
     this.videoService.deleteVideo(this.VideoId);
     this.modalRef.destroy();
   }
+
 
   applyChange(): void {
     this.videoService.setVideo(this.VideoId,this.video);
@@ -363,8 +255,14 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     // this.modalRef.destroy();
   }
 
+
   goBack(): void {
     this.modalRef.destroy();
   }
+
+
+
+
+
 
 }

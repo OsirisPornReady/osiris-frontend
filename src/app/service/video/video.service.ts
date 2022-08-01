@@ -82,7 +82,10 @@ export class VideoService {
 
   getVideo(index:number): Video | null {
     if (index < this.videoList.length) {
-      return this.videoList[index];
+      const video = Video.toVideo(  //TS中的类型检查只在编译时候起作用，运行时类型改变要自己写静态方法
+        JSON.parse(JSON.stringify(this.videoList[index]))
+      );
+      return video;
     } else {
       return null;
     }
@@ -92,7 +95,7 @@ export class VideoService {
     // Object.assign(this.videoList[key],value);
     // console.log(<Video>(JSON.parse(JSON.stringify(value))))
     // this.videoList[key] = (JSON.parse(JSON.stringify(value)) as Video);
-    let temp = JSON.parse(JSON.stringify(value)); //新开堆栈,以防嵌套类型
+    let temp = JSON.parse(JSON.stringify(value)); //新开堆栈,以防结构里有嵌套类型
     for (let prop in this.videoList[index]) {
       this.videoList[index][prop] = temp[prop];
     }
