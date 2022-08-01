@@ -121,6 +121,15 @@ export class UserService {
     }
   }
 
+  getLastUser() {
+    return this.http.get('/ajax/user/getLastUser').toPromise()
+  }
+
+  setLastUser() {
+    const data = JSON.stringify(this.currentUser);
+    return this.http.post('/ajax/user/setLastUser',data,this.httpOptions).toPromise();
+  }
+
   async signIn(userdata:any) {
     // this.http.get('/ajax/login').subscribe(data => { //proxy会将请求以http:xxx.xx.xxx:xxxx/url的形式转发
     //   console.log(data);
@@ -148,8 +157,7 @@ export class UserService {
   signOut() {
     // localStorage.setItem('lastUser',JSON.stringify(this.currentUser));
     // this.currentUser = null;
-
-
+    return this.setLastUser();
   }
 
 }

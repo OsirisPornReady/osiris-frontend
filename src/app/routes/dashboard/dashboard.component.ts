@@ -52,8 +52,8 @@ export class DashboardComponent implements OnInit{
     this.commonDataService.isQuickDelete = this.isQuickDelete;
   }
 
-  signOut() {
-    this.userService.signOut();
+  async signOut() {
+    await this.userService.signOut();
     this.router.navigate(['/login'])
   }
 

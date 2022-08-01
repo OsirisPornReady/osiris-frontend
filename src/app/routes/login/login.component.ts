@@ -23,26 +23,32 @@ export class LoginComponent implements OnInit {
     private nzMessageService: NzMessageService,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() { //把:void去掉了，async不能有那么多多余类型
     this.loginForm = this.fb.group({
       username:['',[Validators.required]],
       password:['',[Validators.required]],
       remember:[false],
     })
 
-    const lastUser = localStorage.getItem('lastUser');
+    // const lastUser = localStorage.getItem('lastUser');
+    // if (lastUser) {
+    //   const username = JSON.parse(lastUser).username;
+    //   const password = JSON.parse(lastUser).password;
+    //   this.loginForm.get('username')?.patchValue(username);
+    //   this.loginForm.get('password')?.patchValue(password);
+    // }
+    const lastUser:any = await this.userService.getLastUser() //node层返回用的是send，直接给的object
     if (lastUser) {
-      const username = JSON.parse(lastUser).username;
-      const password = JSON.parse(lastUser).password;
-      this.loginForm.get('username')?.patchValue(username);
-      this.loginForm.get('password')?.patchValue(password);
+        this.loginForm.get('username')?.patchValue(lastUser.username);
+        this.loginForm.get('password')?.patchValue(lastUser.password);
+        this.loginForm.get('remember')?.patchValue(lastUser.remember);
     }
+
   }
 
   async login() {
     this.isLoading = true
     const signInRes = await this.userService.signIn(this.loginForm.value)
-    console.log(signInRes)
     if (signInRes >= 0) {
       this.nzMessageService.success('登录成功');
       this.isLoading = false;
