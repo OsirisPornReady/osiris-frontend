@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators} from "@angular/forms";
 import { Router, ActivatedRoute} from "@angular/router";
 import { UserService } from "../../service/user/user.service";
 import {User} from "../../models/user";
 import { NzMessageService } from "ng-zorro-antd/message";
+import { MessagePushService } from "../../service/message-push/message-push.service";
+import { Subscription } from "rxjs";
+import { NzNotificationService } from "ng-zorro-antd/notification";
 
 
 @Component({
@@ -11,16 +14,19 @@ import { NzMessageService } from "ng-zorro-antd/message";
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.less']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit,OnDestroy {
 
   loginForm!:FormGroup;
   isLoading = false;
+  messageSubscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private userService: UserService,
     private nzMessageService: NzMessageService,
+    private messagePushService: MessagePushService,
+    private nzNotificationService: NzNotificationService,
   ) { }
 
   async ngOnInit() { //把:void去掉了，async不能有那么多多余类型
@@ -44,6 +50,20 @@ export class LoginComponent implements OnInit {
         this.loginForm.get('remember')?.patchValue(lastUser.remember);
     }
 
+    this.messagePushService.initService();
+    this.messageSubscription = this.messagePushService.message$.subscribe(
+      (next:any) => {
+        this.nzNotificationService.blank(
+            next.title,
+            next.content,
+            { nzDuration: 1500 } //单位是毫秒
+          );
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.messageSubscription.unsubscribe();
   }
 
   async login() {
@@ -65,6 +85,12 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  forgotPassword() {
+    this.messagePushService.sendMessage({ action: 'forgot-password' });
+  }
 
+  register() {
+    this.messagePushService.sendMessage({ action: 'register' });
+  }
 
 }

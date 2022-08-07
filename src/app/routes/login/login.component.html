@@ -22,12 +22,12 @@
           </label>
         </div>
         <div nz-col [nzSpan]="12">
-          <a class="login-form-forgot">Forgot password</a>
+          <a class="login-form-forgot" (click)="forgotPassword()">Forgot password</a>
         </div>
       </div>
       <button nz-button class="login-form-button login-form-margin" type="submit" [nzType]="'primary'" [nzLoading]="isLoading">Log in</button>
       Or
-      <a>register now!</a>
+      <a (click)="register()">register now!</a>
 
     </form>
 

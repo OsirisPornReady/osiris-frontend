@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class CommonDataService {
 
   isQuickDelete:boolean = false;
+  ws!: WebSocket;
 
   guardRedirects:any = {
     dashboard: '/login',

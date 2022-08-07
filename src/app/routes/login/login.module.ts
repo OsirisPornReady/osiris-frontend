@@ -10,6 +10,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {NzCardModule} from "ng-zorro-antd/card";
 import {NzCheckboxModule} from "ng-zorro-antd/checkbox";
 import {NzMessageModule} from "ng-zorro-antd/message";
+import {NzNotificationModule} from "ng-zorro-antd/notification";
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import {NzMessageModule} from "ng-zorro-antd/message";
     NzCardModule,
     NzCheckboxModule,
     NzMessageModule,
+    NzNotificationModule,
   ]
 })
 export class LoginModule { }
