@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit,OnDestroy {
       } else if (signInRes == -2) {
         this.nzMessageService.info('不存在的用户');
       } else if (signInRes == -3) { //其实不需要-3，传输发生错误就直接没值了，直接else就行，或者try...catch
-        this.nzMessageService.error('用户信息传输发生错误');
+        this.nzMessageService.error('数据库连接失败');
       }
       this.isLoading = false;
     }
