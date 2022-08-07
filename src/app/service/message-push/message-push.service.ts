@@ -17,7 +17,7 @@ export class MessagePushService {
   ) { }
 
   initService() {
-    this.messageSocket$ = this.websocketService.connectSocket('loginMessage')
+    this.messageSocket$ = this.websocketService.connectSocket('userSocket/loginMessage')
     if (this.messageSocket$) {
       this.messageSocket$.subscribe(
         (next:any) => {

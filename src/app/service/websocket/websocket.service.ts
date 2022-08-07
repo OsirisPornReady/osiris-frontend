@@ -31,7 +31,7 @@ export class WebsocketService {
 
 
   //angular风格的socket
-  private baseUrl: string = 'ws://localhost:3000/'; //ws://localhost:3000/socketTest
+  private baseUrl: string = 'ws://localhost:3000/websocket/'; //ws://localhost:3000/socketTest
   // private socket$: WebSocketSubject<any> | null = null; //最好不这样写，做成通用socket接口，因为可能不止需要一个socket
 
   connectSocket(socketUrl: string) {
