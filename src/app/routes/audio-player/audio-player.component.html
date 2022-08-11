@@ -1,0 +1,19 @@
+<div class="background-div">
+  <div class="audio-bar">
+    <audio #audioElement id="player" preload="auto">
+      <source src="assets/music.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="button-box">
+      <i nz-icon nzType="step-backward" nzTheme="fill"></i>
+      <i nz-icon nzType="caret-right" nzTheme="outline" (click)="play()"></i>
+      <i nz-icon nzType="pause" nzTheme="outline" (click)="pause()"></i>
+      <i nz-icon nzType="step-forward" nzTheme="fill" (click)="fastForward()"></i>
+    </div>
+
+    <div class="progress-bar">
+      <nz-slider [nzMax]="duration" [nzMin]="0" [(ngModel)]="currentTime" (ngModelChange)="startSlideProgressBar()" (nzOnAfterChange)="slideProgressBar()"></nz-slider>
+    </div>
+  </div>
+
+</div>

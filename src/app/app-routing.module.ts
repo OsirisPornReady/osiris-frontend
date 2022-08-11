@@ -14,6 +14,7 @@ const routes: Routes = [
     // },
     loadChildren: () => import('./routes/dashboard/dashboard.module').then(m => m.DashboardModule)},
   { path: 'login', loadChildren: () => import('./routes/login/login.module').then(m => m.LoginModule)},
+  { path: 'audio-player', loadChildren: () => import('./routes/audio-player/audio-player.module').then(m => m.AudioPlayerModule)},
 ];
 
 @NgModule({
