@@ -6,7 +6,7 @@
           <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
         </nz-card>
         <ng-template #coverTemplate>
-          <nz-badge *ngIf="isQuickDelete" [nzCount]="deleteIconTemplate">
+          <nz-badge [nzCount]="isQuickDelete ? deleteIconTemplate : 0">
             <img style="display: block" [src]=video.thumbnail>
           </nz-badge>
           <ng-template #deleteIconTemplate>
@@ -17,8 +17,6 @@
               style="color: #f5222d;font-size: 20px;z-index: 999"
               (click)="quickDelete($event,i+startIndex)"></i>
           </ng-template>
-
-          <img *ngIf="!isQuickDelete" style="display: block" [src]=video.thumbnail>
         </ng-template>
       </div>
     </div>

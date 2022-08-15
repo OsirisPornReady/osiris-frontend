@@ -91,7 +91,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     // )
     // this.videoService.pushVideo(this.VideoId);
 
-    let next: Video | null = this.videoService.getVideo(this.VideoId);
+    let next: Video | null = this.videoService.retrieveVideo(this.VideoId);
     if (next) { //初始化当前video的值
       this.video = next
     } else {
@@ -246,7 +246,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
 
 
   applyChange(): void {
-    this.videoService.setVideo(this.VideoId,this.video);
+    this.videoService.updateVideo(this.VideoId,this.video);
     this.loading = true;
     setTimeout(() => {
       this.loading = false;

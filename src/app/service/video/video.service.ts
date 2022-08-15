@@ -1,12 +1,21 @@
-import { Injectable } from '@angular/core';
-import { Video } from "../../models/video";
-import { HttpClient } from "@angular/common/http";
-import { Observable, Subject } from "rxjs";
+import {Injectable} from '@angular/core';
+import {Video} from "../../models/video";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class VideoService {
+
+  /*
+  * 何时进行类型检查?
+  *   在传入component之前,因为在component中要将数据和组件进行严格对应,所以传入组件的必须是Video类型
+  */
+
+  httpOptions = {
+    headers: new HttpHeaders({'Content-Type':'application/json'})
+  };
 
   videoList:any = [
     new Video(
@@ -67,8 +76,11 @@ export class VideoService {
     private http: HttpClient
   ) { }
 
-  getVideos(): Video[] {
-    return this.videoList;
+  async initVideoList() {
+    let res:any = await this.http.get('/ajax/video/getAllVideo').toPromise();
+    if (res) {
+      this.videoList = res;
+    }
   }
 
   pushVideoList() {
@@ -80,26 +92,59 @@ export class VideoService {
   //   return this.videoList[index];
   // }
 
-  getVideo(index:number): Video | null {
+  private addVideo(value:any): number {
+    const lastIndex = this.videoList.length;
+    // this.videoList[lastIndex] = new Video();
+    // this.videoList[lastIndex].title = '#new video#';
+    // this.videoList[lastIndex].thumbnail = '/assets/imageFallback.png';
+    this.videoList[lastIndex] = value;
+    this.pushVideoList();
+    return lastIndex;
+  }
+
+  private getVideo(index:number): Video | null {
     if (index < this.videoList.length) {
-      const video = Video.toVideo(  //TS中的类型检查只在编译时候起作用，运行时类型改变要自己写静态方法
-        JSON.parse(JSON.stringify(this.videoList[index]))
-      );
-      return video;
+      try {
+        const video = Video.toVideo(  //TS中的类型检查只在编译时候起作用，运行时类型改变要自己写静态方法
+          JSON.parse(JSON.stringify(this.videoList[index])) //与List中的源数据隔离
+        );
+        return video;
+      } catch (e) { //防止转换成既定类型时出错
+        console.log(e)
+        return null
+      }
     } else {
       return null;
     }
   }
 
-  setVideo(index:number,value:Video): void { //也可以叫update
+  private setVideo(index:number,value:any): void { //也可以叫update
     // Object.assign(this.videoList[key],value);
     // console.log(<Video>(JSON.parse(JSON.stringify(value))))
     // this.videoList[key] = (JSON.parse(JSON.stringify(value)) as Video);
-    let temp = JSON.parse(JSON.stringify(value)); //新开堆栈,以防结构里有嵌套类型
-    for (let prop in this.videoList[index]) {
-      this.videoList[index][prop] = temp[prop];
+
+    // let temp = JSON.parse(JSON.stringify(value)); //新开堆栈,以防结构里有嵌套类型
+    // for (let prop in this.videoList[index]) {
+    //   this.videoList[index][prop] = temp[prop];
+    // }
+    // this.pushVideoList()
+
+    try {
+      this.videoList[index] = Video.toVideo(value);
+      this.pushVideoList();
+    } catch (e) {
+      console.log(e)
     }
-    this.pushVideoList()
+  }
+
+  private delVideo(index:number): boolean {
+    if (index < this.videoList.length) {
+      this.videoList.splice(index,1);
+      this.pushVideoList();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   pushVideo(index:number): void {
@@ -129,24 +174,72 @@ export class VideoService {
     //不要用error和complete，两者都会停止流传输
   }
 
-  createVideo(): number {
-    const lastIndex = this.videoList.length;
-    this.videoList[lastIndex] = new Video();
-    this.videoList[lastIndex].title = '#new video#';
-    this.videoList[lastIndex].thumbnail = '/assets/imageFallback.png';
-    this.pushVideoList();
-    return lastIndex;
-  }
 
-  deleteVideo(index:number): boolean {
-    if (index < this.videoList.length) {
-      this.videoList.splice(index,1);
-      this.pushVideoList();
+//--------------先请求，请求成功再改本地------------------------------------------------
+  async createVideo() {
+    //发送增加请求
+    try {
+      const newVideo = new Video();
+      newVideo.title = '#new video#';
+      newVideo.thumbnail = '/assets/imageFallback.png';
+
+      const index = this.videoList.length
+
+      const data = JSON.stringify({
+        id: index,
+        video: newVideo,
+      });
+      let res:any = await this.http.post('/ajax/video/createVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      console.log(`video(id:${index})视频新增成功`,res);
+      this.addVideo(newVideo);
       return true;
-    } else {
+    } catch (e) {
+      console.log('新增视频失败');
+      console.log(e);
       return false;
     }
   }
+
+  retrieveVideo(index:number): Video | null { //大部分情况下都是从本地缓存拿数据,因为数据先是以列表形式展示,特殊情况才要重新发请求
+    return this.getVideo(index);
+  }
+
+  async updateVideo(index:number,value:any) {
+    //发送更新请求
+    try {
+      const data = JSON.stringify({
+        id: index,
+        video: value,
+      });
+      let res:any = await this.http.post('/ajax/video/updateVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      console.log(`video(id:${index})视频信息修改成功`,res);
+      this.setVideo(index,value);
+      return true;
+    } catch (e) {
+      console.log('更新视频信息失败');
+      console.log(e);
+      return false;
+    }
+  }
+
+  async deleteVideo(index:number) {
+    //发送删除请求
+    try {
+      const data = JSON.stringify({
+        id: index,
+      });
+      let res:any = await this.http.post('/ajax/video/deleteVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      console.log(`video(id:${index})视频删除成功`,res);
+      this.delVideo(index);
+      return true;
+    } catch (e) {
+      console.log('删除视频失败')
+      console.log(e)
+      return false;
+    }
+
+  }
+//----------------------------------------------------------------------------------
 
 
 

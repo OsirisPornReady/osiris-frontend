@@ -38,8 +38,8 @@
 <!--          nzformlabel在缩放最小时会另起一行，但是原生的太麻烦，暂且不考虑过于极端的情况吧-->
           <nz-content class="form-data-wrapper">
             <nz-form-item class="form-item">
-              <nz-form-label nzFor="title" class="form-item-data-label">title</nz-form-label>
-              <nz-form-control>
+              <nz-form-label nzFor="title" class="form-item-label">title</nz-form-label>
+              <nz-form-control class="form-item-control-text">
                 <div [hidden]="editMode" class="form-item-data-div">
                   {{video.title}}
                 </div>
@@ -48,8 +48,8 @@
             </nz-form-item >
 
             <nz-form-item class="form-item">
-              <nz-form-label class="form-item-data-label">stars</nz-form-label>
-              <nz-form-control class="form-item-link">
+              <nz-form-label class="form-item-label">stars</nz-form-label>
+              <nz-form-control class="form-item-control-link">
                 <div class="form-item-data-link-wrap-div">
                   <a
                     *ngFor="let star of arrayTypeDataDict['stars'];let i = index"
@@ -89,8 +89,8 @@
             </nz-form-item >
 
             <nz-form-item class="form-item">
-              <nz-form-label nzFor="title" class="form-item-data-label">date</nz-form-label>
-              <nz-form-control class="form-item-data-date">
+              <nz-form-label nzFor="title" class="form-item-label">date</nz-form-label>
+              <nz-form-control class="form-item-control-date">
                 <div [hidden]="editMode" class="form-item-data-date-div">
                   {{ video.date | date:'yyyy-MM-dd' }}
                 </div>
@@ -105,8 +105,8 @@
             </nz-form-item >
 
             <nz-form-item class="form-item">
-              <nz-form-label class="form-item-data-label">tags</nz-form-label>
-              <nz-form-control>
+              <nz-form-label class="form-item-label">tags</nz-form-label>
+              <nz-form-control class="form-item-control-tag">
                 <div class="form-item-data-tag-wrap-div">
                   <nz-tag
                     [class]="!editMode ? 'form-item-data-tag' : ''"
