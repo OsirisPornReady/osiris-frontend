@@ -15,7 +15,7 @@ export class AclIfDirective implements OnChanges {
   ) { }
 
   ngOnChanges() {
-    let accessibility = this.aclService.buttonRoleValidate(this.aclIf);
+    let accessibility = this.aclService.buttonRoleValidate(this.aclIf); //aclIf取值:create、retrieve、update、delete
     if(accessibility) {
       this.view.createEmbeddedView(this.template);
     } else {

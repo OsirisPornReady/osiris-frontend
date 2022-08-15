@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Video} from "../../models/video";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Subject} from "rxjs";
+import { CommonDataService } from "../common-data/common-data.service";
 
 @Injectable({
   providedIn: 'root'
@@ -73,7 +74,8 @@ export class VideoService {
 
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private commonDataService: CommonDataService,
   ) { }
 
   async initVideoList() {
@@ -137,7 +139,7 @@ export class VideoService {
     }
   }
 
-  private delVideo(index:number): boolean {
+  private removeVideo(index:number): boolean { //delVideo
     if (index < this.videoList.length) {
       this.videoList.splice(index,1);
       this.pushVideoList();
@@ -177,6 +179,15 @@ export class VideoService {
 
 //--------------先请求，请求成功再改本地------------------------------------------------
   async createVideo() {
+    //调试模式
+    if (this.commonDataService.debugMode) {
+      const newVideo = new Video();
+      newVideo.title = '#new video#';
+      newVideo.thumbnail = '/assets/imageFallback.png';
+      this.addVideo(newVideo)
+      return true;
+    }
+
     //发送增加请求
     try {
       const newVideo = new Video();
@@ -205,6 +216,12 @@ export class VideoService {
   }
 
   async updateVideo(index:number,value:any) {
+    //调试模式
+    if (this.commonDataService.debugMode) {
+      this.setVideo(index,value);
+      return true;
+    }
+
     //发送更新请求
     try {
       const data = JSON.stringify({
@@ -223,6 +240,12 @@ export class VideoService {
   }
 
   async deleteVideo(index:number) {
+    //调试模式
+    if (this.commonDataService.debugMode) {
+      this.removeVideo(index)
+      return true;
+    }
+
     //发送删除请求
     try {
       const data = JSON.stringify({
@@ -230,7 +253,7 @@ export class VideoService {
       });
       let res:any = await this.http.post('/ajax/video/deleteVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
       console.log(`video(id:${index})视频删除成功`,res);
-      this.delVideo(index);
+      this.removeVideo(index);
       return true;
     } catch (e) {
       console.log('删除视频失败')

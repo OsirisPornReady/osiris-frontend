@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { VideoService } from "./service/video/video.service";
+import { CommonDataService } from "./service/common-data/common-data.service";
+import { UserService } from "./service/user/user.service";
 
 @Component({
   selector: 'app-root',
@@ -9,13 +10,30 @@ import { VideoService } from "./service/video/video.service";
 export class AppComponent implements OnInit {
 
   constructor(
-    private videoService: VideoService,
+    private commonDataService: CommonDataService,
+    private userService: UserService,
   ) { }
 
   title = 'ng-zorro-test'
   isCollapsed = false;
 
   ngOnInit() {
-    this.videoService.initVideoList();
+    if (this.commonDataService.debugMode) {
+        const user = {
+        "username":"admin",
+        "password":"123456",
+        "authority":{
+          "create":true,
+          "retrieve":true,
+          "update":true,
+          "delete":true
+        },
+        "messageCount": 10
+      }
+      this.userService.setCurrentUser(user)
+    }
+
   }
+
+
 }

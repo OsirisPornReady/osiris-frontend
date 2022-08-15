@@ -3,6 +3,7 @@ import { User } from '../../models/user';
 import {observable, Observable, of} from "rxjs";
 import { catchError,retry } from "rxjs/operators";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { CommonDataService } from "../common-data/common-data.service";
 
 @Injectable({
   providedIn: 'root'
@@ -81,6 +82,7 @@ export class UserService {
 
   constructor(
     private http: HttpClient,
+    private commonDataService: CommonDataService,
   ) { }
 
   // validateUser(userdata:any): number {

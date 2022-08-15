@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class CommonDataService {
 
+  debugMode:boolean = true;
   isQuickDelete:boolean = false;
   ws!: WebSocket;
 
