@@ -79,10 +79,22 @@ export class VideoService {
   ) { }
 
   async initVideoList() {
-    let res:any = await this.http.get('/ajax/video/getAllVideo').toPromise();
-    if (res) {
-      this.videoList = res;
+    if (this.commonDataService.debugMode) {
+      return true; //或者不那么麻烦直接空return就行,最后的值是一个undefined
     }
+
+    try {
+      let res:any = await this.http.get('/ajax/video/getAllVideo').toPromise();
+      if (res) {
+        this.videoList = res;
+      }
+      return true;
+    } catch (e) {
+      console.log('获取视频列表失败')
+      console.log(e)
+      return false;
+    }
+
   }
 
   pushVideoList() {
