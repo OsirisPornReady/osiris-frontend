@@ -33,7 +33,6 @@ export class DashboardComponent implements OnInit{
   ngOnInit() {
     this.commonDataService.isQuickDelete = this.isQuickDelete; //this.switchQuickDelete(); 初始化的时候调整公共数据，并且要注意可读性
     this.user = this.userService.getCurrentUser();
-    this.videoService.initVideoList();
   }
 
   addVideo() {

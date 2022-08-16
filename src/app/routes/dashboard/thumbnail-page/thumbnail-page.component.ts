@@ -18,10 +18,10 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   @ViewChild('virtualScrollWrapper', { static:true }) virtualScrollWrapper?:ElementRef;
 
   videos:any[] = [];
-  set _videos(videos:any) { //videos每次变化都改变一次showItem过于麻烦，不如直接写setter
-    this.videos = videos;
-    this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
-  }
+  // set _videos(videos:any) { //videos每次变化都改变一次showItem过于麻烦，不如直接写setter
+  //   this.videos = videos;
+  //   this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
+  // }
   videoListSubscription:any;
   modalWidth:number = 1300;
   // isVisible:boolean = false;
@@ -62,25 +62,28 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   }
 
 
-  ngOnInit(): void {
+  async ngOnInit() { //不阻塞的话就直接返回本地测试数据了
     this.videoListSubscription = this.videoService.videoListStream$.subscribe(
       (next:any) => {
-        this._videos = next;
+        // this._videos = next;
         // this.changeDetection.detectChanges();
+
+        this.videos = next;
+        console.log(this.videos)
+        const videoNum = this.videos.length
+        this.totalHeight = ( Math.floor(videoNum / this.rowNumber) + (videoNum % this.rowNumber > 0 ? 1 : 0) ) * this.itemHeight + 50 ; //考虑到占不满一行的情况下，当前videos能填满几行,增加尾部余量以防最后加载不出来
+        this.showHeight = window.innerHeight - 64 - 24 * 2; //可以减也可以不减padding
+        this.showNumber = Math.floor(this.showHeight / this.itemHeight) * this.rowNumber + this.rowNumber; //maxRow * rowNum + 上下边缘截取的余量
+        this.renderer2.setStyle(this.virtualScrollWrapper?.nativeElement,'height',this.totalHeight + 'px'); //布置虚拟高度
+
+
+        this.startIndex = 0
+        this.endIndex = this.startIndex + this.showNumber;
+        this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
       }
     )
+    await this.videoService.initVideoList();
     this.videoService.pushVideoList();
-
-    const videoNum = this.videos.length
-    this.totalHeight = ( Math.floor(videoNum / this.rowNumber) + (videoNum % this.rowNumber > 0 ? 1 : 0) ) * this.itemHeight + 50 ; //考虑到占不满一行的情况下，当前videos能填满几行,增加尾部余量以防最后加载不出来
-    this.showHeight = window.innerHeight - 64 - 24 * 2; //可以减也可以不减padding
-    this.showNumber = Math.floor(this.showHeight / this.itemHeight) * this.rowNumber + this.rowNumber; //maxRow * rowNum + 上下边缘截取的余量
-    this.renderer2.setStyle(this.virtualScrollWrapper?.nativeElement,'height',this.totalHeight + 'px'); //布置虚拟高度
-
-
-    this.startIndex = 0
-    this.endIndex = this.startIndex + this.showNumber;
-    this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
   }
 
   onScroll(e?:any) {
@@ -125,12 +128,12 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     // 3、this.startIndex + this.showNumber > this.videos.length //全取
   }
 
-  selectVideo(id:number,video:any) {
-    console.log('select video index:',id)
+  selectVideo(video:any) {
+    console.log('select video index:',video.id)
     this.modalService.create({
       nzContent:VideoDetailComponent,
       nzComponentParams: {
-        VideoId:id,
+        VideoId:video.id,
       },
       nzWidth:this.modalWidth,
       nzFooter:null,
@@ -145,9 +148,9 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   //   this.isVisible = false;
   // }
 
-  quickDelete(e:any,index:number) {
+  quickDelete(e:any,video:any) {
     e.stopPropagation();
-    this.videoService.deleteVideo(index);
+    this.videoService.deleteVideo(video.id);
   }
 
   ngOnDestroy() {

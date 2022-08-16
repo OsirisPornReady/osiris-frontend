@@ -2,7 +2,7 @@
   <div #virtualScrollWrapper class="virtual-scroll">
     <div #thumbnails nz-row class="thumbnail-grid">
       <div nz-col [nzSpan]="3" *ngFor="let video of showItem;let i = index">
-        <nz-card class="thumbnail-card" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="selectVideo(i+startIndex,video)">
+        <nz-card class="thumbnail-card" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="selectVideo(video)">
           <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
         </nz-card>
         <ng-template #coverTemplate>
@@ -15,7 +15,7 @@
               nzType="close-circle"
               class="ant-scroll-number-custom-component"
               style="color: #f5222d;font-size: 20px;z-index: 999"
-              (click)="quickDelete($event,i+startIndex)"></i>
+              (click)="quickDelete($event,video)"></i>
           </ng-template>
         </ng-template>
       </div>

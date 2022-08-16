@@ -47,6 +47,10 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   arrayTypeDataInputValueDict:any = {};
   arrayTypeDataDict:any = {};
 
+  popoverContent:string = 'aa';
+  popoverContentIndex:number = -1;
+  popoverContentType:string = '';
+
 
   // video:Video = new Video();
   video!:Video;
@@ -129,6 +133,15 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     // this.arrayTypeDataInputElementDict['tags'] = this.tagInputElement;
   }
 
+  startChangeCell(tag:string, index:number, type:string) {
+    this.popoverContent = tag;
+    this.popoverContentIndex = index;
+    this.popoverContentType = type;
+  }
+
+  confirmChangeCell() {
+    this.arrayTypeDataDict[this.popoverContentType][this.popoverContentIndex] = this.popoverContent;
+  }
 
 // ▼-----------------------------------------数组型数据通用式处理函数----------------------------------------------▼
   sliceDataName(data: string): string {  //tag和link通用
@@ -214,7 +227,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     for (const field in this.arrayTypeDataDict) {
       const control = this.videoEditingForm.get(field)!
       control.setValidators([
-        Validators.required,
+        // Validators.required,
         ArrayDataTypeValidator(this.video[field as keyof Video]),
       ])
       control.updateValueAndValidity();
@@ -222,6 +235,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
 
     if (this.videoEditingForm.valid) {
       this.video = JSON.parse(JSON.stringify(this.videoEditingForm.value)); //这里的video就起到interface的作用了，只验证属性类型
+      this.video.id = this.VideoId;
       console.log('保存表单:',this.videoEditingForm)
       this.editMode = false;
       if (this.videoEditingForm.dirty) {

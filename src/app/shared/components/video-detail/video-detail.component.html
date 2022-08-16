@@ -5,8 +5,8 @@
       *aclIf="'update'"
       class="switch-edit-mode"
       [(ngModel)]="editMode"
-      nzCheckedChildren="编辑"
-      nzUnCheckedChildren="查看"
+      nzCheckedChildren="查看"
+      nzUnCheckedChildren="编辑"
       (ngModelChange)="switchEdit()">
     </nz-switch>
   </nz-header>
@@ -47,6 +47,10 @@
               </nz-form-control>
             </nz-form-item >
 
+            <ng-template #popoverContentTemplate>
+                <input nz-input [ngModelOptions]="{standalone: true}" [(ngModel)]="popoverContent" (keydown.enter)="confirmChangeCell()">
+            </ng-template>
+
             <nz-form-item class="form-item">
               <nz-form-label class="form-item-label">stars</nz-form-label>
               <nz-form-control class="form-item-control-link">
@@ -54,7 +58,9 @@
                   <a
                     *ngFor="let star of arrayTypeDataDict['stars'];let i = index"
                     href="javascript:;"
-                    class="form-item-data-link">
+                    class="form-item-data-link"nz-popover [nzPopoverContent]="popoverContentTemplate" [nzPopoverTrigger]="editMode ? 'click' : null"
+                    (click)="startChangeCell(star,i,'stars')"
+                  >
                     {{star}}
                     <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeLink('stars',i)" class="form-item-data-remove-link"></i>
                   </a>
@@ -114,6 +120,8 @@
                     [nzColor]="'volcano'"
                     [nzMode]="editMode ? 'closeable' : 'default'"
                     (nzOnClose)="handleTagClose('tags',tag)"
+                    nz-popover [nzPopoverContent]="popoverContentTemplate" [nzPopoverTrigger]="editMode ? 'click' : null"
+                    (click)="startChangeCell(tag,i,'tags')"
                   >
                     {{ sliceDataName(tag) }}
                   </nz-tag>

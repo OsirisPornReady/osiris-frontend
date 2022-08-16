@@ -20,6 +20,7 @@ export class VideoService {
 
   videoList:any = [
     new Video(
+      0,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -28,6 +29,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      1,
       'Good Morning',
       ['Kanye West'],
       '/assets/Good morning.jpg',
@@ -36,6 +38,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      2,
       'Prey',
       ['Mick Gordon'],
       '/assets/prey.jpg',
@@ -44,6 +47,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      3,
       'Sad Machine',
       ['Porter Robinson'],
       '/assets/sad machine.jpg',
@@ -52,6 +56,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      4,
       'Snow Crash',
       ['Mitch Murder'],
       '/assets/snow crash.jpg',
@@ -60,6 +65,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      5,
       'Sakanaction',
       ['サカナクション',],
       '/assets/Sakanaction_album_cover.jpg',
@@ -85,9 +91,7 @@ export class VideoService {
 
     try {
       let res:any = await this.http.get('/ajax/video/getAllVideo').toPromise();
-      if (res) {
-        this.videoList = res;
-      }
+      this.videoList = res;
       return true;
     } catch (e) {
       console.log('获取视频列表失败')
@@ -106,33 +110,38 @@ export class VideoService {
   //   return this.videoList[index];
   // }
 
-  private addVideo(value:any): number {
-    const lastIndex = this.videoList.length;
-    // this.videoList[lastIndex] = new Video();
-    // this.videoList[lastIndex].title = '#new video#';
-    // this.videoList[lastIndex].thumbnail = '/assets/imageFallback.png';
-    this.videoList[lastIndex] = value;
-    this.pushVideoList();
-    return lastIndex;
+  //---------------本身逻辑闭环的情况下不需要加那么多情况判断,因为正常逻辑里不会出现越界值等问题,出现了就是出错了,直接在错误处理流程中处理就行
+  private addVideo(value:any): boolean {
+    try {
+      const lastIndex = this.videoList.length;
+      this.videoList[lastIndex] = value;
+      this.pushVideoList();
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 
-  private getVideo(index:number): Video | null {
-    if (index < this.videoList.length) {
-      try {
-        const video = Video.toVideo(  //TS中的类型检查只在编译时候起作用，运行时类型改变要自己写静态方法
-          JSON.parse(JSON.stringify(this.videoList[index])) //与List中的源数据隔离
+  private getVideo(id:number): Video | null {
+    try {
+      const video = this.videoList.find((v:any) => { //找到则返回值,未找到则返回undefined
+        return v.id == id
+      })
+      if (video) {  //只在闭环逻辑里可以不加此判断,但是get方法在其他地方可能用到
+        return Video.toVideo(  //TS中的类型检查只在编译时候起作用，运行时类型改变要自己写静态方法
+          JSON.parse(JSON.stringify(video)) //与List中的源数据隔离
         );
-        return video;
-      } catch (e) { //防止转换成既定类型时出错
-        console.log(e)
-        return null
+      } else {
+        return null;
       }
-    } else {
+    } catch (e) { //防止转换成既定类型时出错
+      console.log(e);
       return null;
     }
   }
 
-  private setVideo(index:number,value:any): void { //也可以叫update
+  private setVideo(id:number,value:any): boolean { //也可以叫update
     // Object.assign(this.videoList[key],value);
     // console.log(<Video>(JSON.parse(JSON.stringify(value))))
     // this.videoList[key] = (JSON.parse(JSON.stringify(value)) as Video);
@@ -144,19 +153,40 @@ export class VideoService {
     // this.pushVideoList()
 
     try {
+      let index = -1;
+      this.videoList.find((v:any,i:number) => { //找到则返回值,未找到则返回undefined
+        if (v.id == id) {
+          index = i;
+          return true;
+        } else {
+          return false;
+        }
+      })
       this.videoList[index] = Video.toVideo(value);
       this.pushVideoList();
+      return true;
     } catch (e) {
       console.log(e)
+      return false;
     }
   }
 
-  private removeVideo(index:number): boolean { //delVideo
-    if (index < this.videoList.length) {
+  private removeVideo(id:number): boolean { //delVideo
+    try {
+      let index = -1;
+      this.videoList.find((v:any,i:number) => { //找到则返回值,未找到则返回undefined
+        if (v.id == id) {
+          index = i
+          return true;
+        } else {
+          return false;
+        }
+      })
       this.videoList.splice(index,1);
       this.pushVideoList();
       return true;
-    } else {
+    } catch (e) {
+      console.log(e)
       return false;
     }
   }
@@ -194,27 +224,33 @@ export class VideoService {
     //调试模式
     if (this.commonDataService.debugMode) {
       const newVideo = new Video();
+      newVideo.id = this.videoList.length
       newVideo.title = '#new video#';
+      newVideo.stars = [];
       newVideo.thumbnail = '/assets/imageFallback.png';
-      this.addVideo(newVideo)
-      return true;
+      newVideo.tags = [];
+      newVideo.path = '';
+      newVideo.date = new Date();
+      return this.addVideo(newVideo)
     }
 
     //发送增加请求
     try {
       const newVideo = new Video();
       newVideo.title = '#new video#';
+      newVideo.stars = [];
       newVideo.thumbnail = '/assets/imageFallback.png';
-
-      const index = this.videoList.length
+      newVideo.tags = [];
+      newVideo.path = '';
+      newVideo.date = new Date();
 
       const data = JSON.stringify({
-        id: index,
         video: newVideo,
       });
       let res:any = await this.http.post('/ajax/video/createVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
-      console.log(`video(id:${index})视频新增成功`,res);
+      newVideo.id = res.id;
       this.addVideo(newVideo);
+      console.log(`video(id:${res.id})视频新增成功`,res);
       return true;
     } catch (e) {
       console.log('新增视频失败');
@@ -223,26 +259,25 @@ export class VideoService {
     }
   }
 
-  retrieveVideo(index:number): Video | null { //大部分情况下都是从本地缓存拿数据,因为数据先是以列表形式展示,特殊情况才要重新发请求
-    return this.getVideo(index);
+  retrieveVideo(id:number): Video | null { //大部分情况下都是从本地缓存拿数据,因为数据先是以列表形式展示,特殊情况才要重新发请求
+    return this.getVideo(id);
   }
 
-  async updateVideo(index:number,value:any) {
+  async updateVideo(id:number,value:any) {
     //调试模式
     if (this.commonDataService.debugMode) {
-      this.setVideo(index,value);
-      return true;
+      return this.setVideo(id,value);
     }
 
     //发送更新请求
     try {
       const data = JSON.stringify({
-        id: index,
+        id: id,
         video: value,
       });
       let res:any = await this.http.post('/ajax/video/updateVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
-      console.log(`video(id:${index})视频信息修改成功`,res);
-      this.setVideo(index,value);
+      this.setVideo(id,value);
+      console.log(`video(id:${id})视频信息修改成功`,res);
       return true;
     } catch (e) {
       console.log('更新视频信息失败');
@@ -251,21 +286,20 @@ export class VideoService {
     }
   }
 
-  async deleteVideo(index:number) {
+  async deleteVideo(id:number) {
     //调试模式
     if (this.commonDataService.debugMode) {
-      this.removeVideo(index)
-      return true;
+      return this.removeVideo(id)
     }
 
     //发送删除请求
     try {
       const data = JSON.stringify({
-        id: index,
+        id: id,
       });
       let res:any = await this.http.post('/ajax/video/deleteVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
-      console.log(`video(id:${index})视频删除成功`,res);
-      this.removeVideo(index);
+      this.removeVideo(id);
+      console.log(`video(id:${id})视频删除成功`,res);
       return true;
     } catch (e) {
       console.log('删除视频失败')

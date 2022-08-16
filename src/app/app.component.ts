@@ -16,8 +16,11 @@ export class AppComponent implements OnInit {
 
   title = 'ng-zorro-test'
   isCollapsed = false;
+  debug:boolean = true
 
   ngOnInit() {
+    this.commonDataService.debugMode = this.debug;
+
     if (this.commonDataService.debugMode) {
         const user = {
         "username":"admin",
