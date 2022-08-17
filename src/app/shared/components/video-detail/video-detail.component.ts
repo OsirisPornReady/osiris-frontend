@@ -221,6 +221,11 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   }
 
 
+  uploadImage = (file:any) => {
+
+  }
+
+
   saveEditedForm(): void {
     //绑定到input这类简单输入组件的数据如title等可以自动校验(隐式校验)，但复杂类型的数据如actor、tags等最好手动控制校验
     this.patchArrayTypeData();

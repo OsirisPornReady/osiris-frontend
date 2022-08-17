@@ -2,6 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonDataService } from "./service/common-data/common-data.service";
 import { UserService } from "./service/user/user.service";
 
+// // @ts-ignore
+// import * as debugConfig from '../../GlobalConfig.js' //能成功但是得加ts-ignore
+
+// // @ts-ignore
+// import { debugMode } from '../../GlobalConfig.js'
+
+// @ts-ignore
+import * as GlobalConfig from '../../GlobalConfig.js'
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -16,10 +25,9 @@ export class AppComponent implements OnInit {
 
   title = 'ng-zorro-test'
   isCollapsed = false;
-  debug:boolean = true
 
   ngOnInit() {
-    this.commonDataService.debugMode = this.debug;
+    this.commonDataService.debugMode = GlobalConfig.debugMode;
 
     if (this.commonDataService.debugMode) {
         const user = {

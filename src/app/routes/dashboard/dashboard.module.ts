@@ -42,6 +42,7 @@ import {NzAvatarModule} from "ng-zorro-antd/avatar";
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {NzPopoverModule} from "ng-zorro-antd/popover";
+import {NzUploadFile, NzUploadModule} from "ng-zorro-antd/upload";
 
 
 @NgModule({
@@ -82,6 +83,7 @@ import {NzPopoverModule} from "ng-zorro-antd/popover";
         NzDropDownModule,
         NzEmptyModule,
         NzPopoverModule,
+        NzUploadModule,
     ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },
