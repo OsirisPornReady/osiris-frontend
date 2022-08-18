@@ -17,28 +17,42 @@
         <nz-layout class="form-layout">
 <!--          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth">-->
           <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth" nzBreakpoint="md" [nzCollapsedWidth]="1" (nzCollapsedChange)="foldImage()">
-            <nz-form-item>
+            <nz-form-item *ngIf="video.thumbnail">
               <nz-form-control>
-                <img
-                  nz-image
-                  width="300px"
-                  height="300px"
-                  [nzSrc]="video.thumbnail"
-                  [nzFallback]="'/assets/imageFallback.png'"
-                  alt=""
-                  [hidden]="isImageFold"
-                />
+                <nz-badge [nzCount]="editMode ? deleteIconTemplate : 0">
+                  <img
+                    nz-image
+                    width="300px"
+                    height="300px"
+                    [nzSrc]="video.thumbnail"
+                    [nzFallback]="'/assets/imageFallback.png'"
+                    alt=""
+                    [hidden]="isImageFold"
+                  />
+                </nz-badge>
+                <ng-template #deleteIconTemplate>
+                  <i
+                    nz-icon
+                    nzType="close-circle"
+                    class="ant-scroll-number-custom-component"
+                    style="color: #f5222d;font-size: 20px;z-index: 999"
+                    (click)="removeThumbnail()"></i>
+                </ng-template>
               </nz-form-control>
             </nz-form-item >
-            <nz-form-item>
+
+            <nz-form-item *ngIf="!video.thumbnail">
               <nz-form-control>
                 <nz-upload
-                  class="avatar-uploader"
-                  nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  nzName="avatar"
-                  nzListType="picture-card"
+                  class="thumbnail-uploader"
+                  nzAction="/ajax/uploader/uploadImage"
+                  nzName="thumbnail-uploader"
+                  [(nzFileList)]="imageList"
                   [nzShowUploadList]="false"
+                  [nzShowButton]="imageList.length < 1"
+                  (nzChange)="uploadImage($event)"
                 >
+                  <button nz-button type="button" nzType="dashed" class="upload-image-button">upload</button>
                 </nz-upload>
               </nz-form-control>
             </nz-form-item >

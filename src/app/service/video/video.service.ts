@@ -227,7 +227,7 @@ export class VideoService {
       newVideo.id = this.videoList.length
       newVideo.title = '#new video#';
       newVideo.stars = [];
-      newVideo.thumbnail = '/assets/imageFallback.png';
+      newVideo.thumbnail = ''; ///assets/imageFallback.png
       newVideo.tags = [];
       newVideo.path = '';
       newVideo.date = new Date();

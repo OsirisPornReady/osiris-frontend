@@ -10,6 +10,7 @@ import { TagValidator } from "../../validators/tag.validator";
 import { ArrayDataTypeValidator } from "../../validators/arrayDataType.validator";
 import {filter} from "rxjs/operators";
 import { DatePipe } from "@angular/common";
+import { NzUploadFile } from "ng-zorro-antd/upload";
 
 
 @Component({
@@ -67,6 +68,7 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   // // 750px
   dateFormat = 'yyyy/MM/dd';
 
+  imageList:NzUploadFile[] = [];
 
   constructor(
     private videoService: VideoService,
@@ -221,8 +223,17 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   }
 
 
-  uploadImage = (file:any) => {
+  uploadImage(event:any) {
+    if (event.type === 'success') {
+      console.log(event.file.originFileObj?.name)
+      this.video.thumbnail = event.file.originFileObj?.name
+      console.log('上传成功')
+    }
+  }
 
+  removeThumbnail() {
+    this.video.thumbnail = '';
+    this.imageList.pop();
   }
 
 
