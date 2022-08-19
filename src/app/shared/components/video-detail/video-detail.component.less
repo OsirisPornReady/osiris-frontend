@@ -24,35 +24,36 @@
 .video-detail-content {
   width: 100%;
   height: @modal-content-height;
-  overflow-x: auto;
+  //overflow-x: auto;
 
   .video-editing-form {
-    //width: 100%;
-    width: 1252px; //modalwidth(1300)去掉左右padding(24)之后的余量，且定值才好设置overflow
+    width: 100%;
+    //width: 1252px; //modalwidth(1300)去掉左右padding(24)之后的余量，且定值才好设置overflow
     height: 100%;
 
-    .form-layout {
-      width: 100%;
-      height: 100%;
-      background-color: white;
+    //.form-layout {
+    //  width: 100%;
+    //  height: 100%;
+    //  background-color: white;
+    //
+    //  .form-image-wrapper { //就是form里的sider
+    //    display: inline-block;
+    //    height: 100%;
+    //    padding-top: 10px;
+    //    border-right: 1px solid rgb(195, 191, 191);
+    //    background-color: white;
+    //  }
+    //
+    //  .form-data-wrapper { //就是form里的content
+    //    display: inline-block;
+    //    padding-top: 10px;
+    //    padding-left: 20px;
+    //    height: 100%;
+    //    overflow-y: auto;
+    //    overflow-x: hidden;
+    //  }
+    //}
 
-      .form-image-wrapper { //就是form里的sider
-        display: inline-block;
-        height: 100%;
-        padding-top: 10px;
-        border-right: 1px solid rgb(195, 191, 191);
-        background-color: white;
-      }
-
-      .form-data-wrapper { //就是form里的content
-        display: inline-block;
-        padding-top: 10px;
-        padding-left: 20px;
-        height: 100%;
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
-    }
   }
 }
 

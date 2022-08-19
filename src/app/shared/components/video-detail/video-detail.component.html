@@ -11,187 +11,160 @@
     </nz-switch>
   </nz-header>
 
-  <nz-content class="outer-layout outer-layout-content">
-    <div class="video-detail-content">
+  <nz-content class="outer-layout outer-layout-content" nz-row>
+
+<!--    左侧,相关图片-->
+    <div nz-col [nzSpan]="15" class="video-detail-image">
+      <div *ngIf="video.thumbnail">
+        <nz-badge [nzCount]="editMode ? deleteIconTemplate : 0">
+          <img
+            nz-image
+            width="300px"
+            height="300px"
+            [nzSrc]="video.thumbnail"
+            [nzFallback]="'/assets/imageFallback.png'"
+            alt=""
+            [hidden]="isImageFold"
+          />
+        </nz-badge>
+        <ng-template #deleteIconTemplate>
+          <i
+            nz-icon
+            nzType="close-circle"
+            class="ant-scroll-number-custom-component"
+            style="color: #f5222d;font-size: 20px;z-index: 999"
+            (click)="removeThumbnail()"></i>
+        </ng-template>
+      </div>
+
+
+      <div *ngIf="!video.thumbnail">
+        <nz-upload
+          class="thumbnail-uploader"
+          nzAction="/ajax/uploader/uploadImage"
+          nzName="thumbnail-uploader"
+          [(nzFileList)]="imageList"
+          [nzShowUploadList]="false"
+          [nzShowButton]="imageList.length < 1"
+          (nzChange)="uploadImage($event)"
+        >
+          <button nz-button type="button" nzType="dashed" class="upload-image-button">upload</button>
+        </nz-upload>
+      </div>
+    </div>
+
+<!--    右侧,信息详情表-->
+    <div class="video-detail-content" nz-col [nzSpan]="9">
       <form nz-form id="videoEditingForm" [formGroup]="videoEditingForm" class="video-editing-form" (ngSubmit)="saveEditedForm()">
-        <nz-layout class="form-layout">
-<!--          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth">-->
-          <nz-sider class="form-image-wrapper" [nzWidth]="thumbnailWidth" nzBreakpoint="md" [nzCollapsedWidth]="1" (nzCollapsedChange)="foldImage()">
-            <nz-form-item *ngIf="video.thumbnail">
-              <nz-form-control>
-                <nz-badge [nzCount]="editMode ? deleteIconTemplate : 0">
-                  <img
-                    nz-image
-                    width="300px"
-                    height="300px"
-                    [nzSrc]="video.thumbnail"
-                    [nzFallback]="'/assets/imageFallback.png'"
-                    alt=""
-                    [hidden]="isImageFold"
-                  />
-                </nz-badge>
-                <ng-template #deleteIconTemplate>
-                  <i
-                    nz-icon
-                    nzType="close-circle"
-                    class="ant-scroll-number-custom-component"
-                    style="color: #f5222d;font-size: 20px;z-index: 999"
-                    (click)="removeThumbnail()"></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item >
+        <nz-form-item class="form-item">
+          <nz-form-label nzFor="title" class="form-item-label" [nzSpan]="4">title</nz-form-label>
+          <nz-form-control class="form-item-control-text" [nzSpan]="20">
+            <div [hidden]="editMode" class="form-item-data-div">
+              {{video.title}}
+            </div>
+            <input class="form-item-data-input" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input (keydown.enter)="saveEditedForm()"/>
+          </nz-form-control>
+        </nz-form-item >
 
-            <nz-form-item *ngIf="!video.thumbnail">
-              <nz-form-control>
-                <nz-upload
-                  class="thumbnail-uploader"
-                  nzAction="/ajax/uploader/uploadImage"
-                  nzName="thumbnail-uploader"
-                  [(nzFileList)]="imageList"
-                  [nzShowUploadList]="false"
-                  [nzShowButton]="imageList.length < 1"
-                  (nzChange)="uploadImage($event)"
-                >
-                  <button nz-button type="button" nzType="dashed" class="upload-image-button">upload</button>
-                </nz-upload>
-              </nz-form-control>
-            </nz-form-item >
-          </nz-sider>
+        <ng-template #popoverContentTemplate>
+            <input nz-input [ngModelOptions]="{standalone: true}" [(ngModel)]="popoverContent" (keydown.enter)="confirmChangeCell()">
+        </ng-template>
 
-<!--          [nzSpan]="4"-->
-<!--          [nzSpan]="14"-->
-
-<!--          nzformlabel在缩放最小时会另起一行，但是原生的太麻烦，暂且不考虑过于极端的情况吧-->
-          <nz-content class="form-data-wrapper">
-            <nz-form-item class="form-item">
-              <nz-form-label nzFor="title" class="form-item-label">title</nz-form-label>
-              <nz-form-control class="form-item-control-text">
-                <div [hidden]="editMode" class="form-item-data-div">
-                  {{video.title}}
-                </div>
-                <input class="form-item-data-input" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input (keydown.enter)="saveEditedForm()"/>
-              </nz-form-control>
-            </nz-form-item >
-
-            <ng-template #popoverContentTemplate>
-                <input nz-input [ngModelOptions]="{standalone: true}" [(ngModel)]="popoverContent" (keydown.enter)="confirmChangeCell()">
-            </ng-template>
-
-            <nz-form-item class="form-item">
-              <nz-form-label class="form-item-label">stars</nz-form-label>
-              <nz-form-control class="form-item-control-link">
-                <div class="form-item-data-link-wrap-div">
-                  <a
-                    *ngFor="let star of arrayTypeDataDict['stars'];let i = index"
-                    href="javascript:;"
-                    class="form-item-data-link"nz-popover [nzPopoverContent]="popoverContentTemplate" [nzPopoverTrigger]="editMode ? 'click' : null"
-                    (click)="startChangeCell(star,i,'stars')"
-                  >
-                    {{star}}
-                    <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeLink('stars',i)" class="form-item-data-remove-link"></i>
+        <nz-form-item class="form-item">
+          <nz-form-label class="form-item-label" [nzSpan]="4">stars</nz-form-label>
+          <nz-form-control class="form-item-control-link" [nzSpan]="20">
+            <div class="form-item-data-link-wrap-div">
+              <a
+                *ngFor="let star of arrayTypeDataDict['stars'];let i = index"
+                href="javascript:;"
+                class="form-item-data-link"nz-popover [nzPopoverContent]="popoverContentTemplate" [nzPopoverTrigger]="editMode ? 'click' : null"
+                (click)="startChangeCell(star,i,'stars')"
+              >
+                {{star}}
+                <i *ngIf="editMode" nz-icon nzType="close" nzTheme="outline" (click)="removeLink('stars',i)" class="form-item-data-remove-link"></i>
+              </a>
+              <div *ngIf="editMode" style="display: inline-block">
+                <ng-container *ngIf="!arrayTypeDataInputVisibleDict['stars']">
+                  <a href="javascript:;" class="form-item-data-new-link">
+                    <i nz-icon nzType="plus" (click)="showDataInput('stars')"></i>
                   </a>
-                  <div *ngIf="editMode" style="display: inline-block">
-                    <ng-container *ngIf="!arrayTypeDataInputVisibleDict['stars']">
-                      <a href="javascript:;" class="form-item-data-new-link">
-                        <i nz-icon nzType="plus" (click)="showDataInput('stars')"></i>
-                      </a>
-                    </ng-container>
-                    <nz-input-group *ngIf="arrayTypeDataInputVisibleDict['stars']" [nzSuffix]="starInputSuffix" [nzCompact]="true">
-                      <input
-                        #starInputElement
-                        nz-input
-                        nzSize="small"
-                        type="text"
-                        [(ngModel)]="arrayTypeDataInputValueDict['stars']"
-                        style="width: 78px;height: 22px;"
-                        (blur)="handleDataInputConfirm('stars')"
-                        (keydown.enter)="handleDataInputConfirm('stars')"
-                        [ngModelOptions]="{standalone: true}"
-                        nzBorderless
-                      />
-                    </nz-input-group>
-                    <ng-template #starInputSuffix>
-                      <a href="javascript:;">
-                        <i nz-icon nzType="close" (click)="handleLinkInputClose('stars')"></i>
-                      </a>
-                    </ng-template>
-                  </div>
-                </div>
-              </nz-form-control>
-            </nz-form-item >
+                </ng-container>
+                <nz-input-group *ngIf="arrayTypeDataInputVisibleDict['stars']" [nzSuffix]="starInputSuffix" [nzCompact]="true">
+                  <input
+                    #starInputElement
+                    nz-input
+                    nzSize="small"
+                    type="text"
+                    [(ngModel)]="arrayTypeDataInputValueDict['stars']"
+                    style="width: 78px;height: 22px;"
+                    (blur)="handleDataInputConfirm('stars')"
+                    (keydown.enter)="handleDataInputConfirm('stars')"
+                    [ngModelOptions]="{standalone: true}"
+                    nzBorderless
+                  />
+                </nz-input-group>
+                <ng-template #starInputSuffix>
+                  <a href="javascript:;">
+                    <i nz-icon nzType="close" (click)="handleLinkInputClose('stars')"></i>
+                  </a>
+                </ng-template>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item >
 
-            <nz-form-item class="form-item">
-              <nz-form-label nzFor="title" class="form-item-label">date</nz-form-label>
-              <nz-form-control class="form-item-control-date">
-                <div [hidden]="editMode" class="form-item-data-date-div">
-                  {{ video.date | date:'yyyy-MM-dd' }}
-                </div>
-                <nz-date-picker
-                  [hidden]="!editMode"
-                  [nzDisabled]="!editMode"
-                  [nzMode]="'date'"
-                  [nzAllowClear]="true"
-                  [nzFormat]="dateFormat"
-                  formControlName="date"></nz-date-picker>
-              </nz-form-control>
-            </nz-form-item >
+        <nz-form-item class="form-item">
+          <nz-form-label nzFor="title" class="form-item-label" [nzSpan]="4">date</nz-form-label>
+          <nz-form-control class="form-item-control-date" [nzSpan]="20">
+            <div [hidden]="editMode" class="form-item-data-date-div">
+              {{ video.date | date:'yyyy-MM-dd' }}
+            </div>
+            <nz-date-picker
+              [hidden]="!editMode"
+              [nzDisabled]="!editMode"
+              [nzMode]="'date'"
+              [nzAllowClear]="true"
+              [nzFormat]="dateFormat"
+              formControlName="date"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item >
 
-            <nz-form-item class="form-item">
-              <nz-form-label class="form-item-label">tags</nz-form-label>
-              <nz-form-control class="form-item-control-tag">
-                <div class="form-item-data-tag-wrap-div">
-                  <nz-tag
-                    [class]="!editMode ? 'form-item-data-tag' : ''"
-                    *ngFor="let tag of arrayTypeDataDict['tags']; let i = index"
-                    [nzColor]="'volcano'"
-                    [nzMode]="editMode ? 'closeable' : 'default'"
-                    (nzOnClose)="handleTagClose('tags',tag)"
-                    nz-popover [nzPopoverContent]="popoverContentTemplate" [nzPopoverTrigger]="editMode ? 'click' : null"
-                    (click)="startChangeCell(tag,i,'tags')"
-                  >
-                    {{ sliceDataName(tag) }}
-                  </nz-tag>
-                  <div *ngIf="editMode" style="display: inline-block">
-                    <nz-tag *ngIf="!arrayTypeDataInputVisibleDict['tags']" class="form-item-data-new-tag" nzNoAnimation (click)="showDataInput('tags')">
-                      <i nz-icon nzType="plus"></i>
-                      New Tag
-                    </nz-tag>
-                    <input
-                      #tagInputElement
-                      nz-input
-                      nzSize="small"
-                      *ngIf="arrayTypeDataInputVisibleDict['tags']"
-                      type="text"
-                      [(ngModel)]="arrayTypeDataInputValueDict['tags']"
-                      style="width: 78px;height: 22px"
-                      (blur)="handleDataInputConfirm('tags')"
-                      (keydown.enter)="handleDataInputConfirm('tags')"
-                      [ngModelOptions]="{standalone: true}"
-                    />
-                  </div>
-                </div>
-              </nz-form-control>
-            </nz-form-item>
-
-<!--            <ng-container *ngFor="let a of testArray">-->
-<!--              <nz-form-item class="form-item">-->
-<!--                <nz-form-label nzFor="title" class="form-item-data-label">title</nz-form-label>-->
-<!--                <nz-form-control>-->
-<!--                  <div [hidden]="editMode" class="form-item-data-div">-->
-<!--                    {{video.title}}-->
-<!--                  </div>-->
-<!--                  <input class="form-item-data-input" formControlName="title" id="title" [hidden]="!editMode" type="text" nz-input/>-->
-<!--                </nz-form-control>-->
-<!--              </nz-form-item >-->
-<!--            </ng-container>-->
-
-          </nz-content>
-
-        </nz-layout>
-
-<!--        <nz-form-item *ngIf="editMode">-->
-<!--          <button nz-button type="submit" nzType="primary">保存修改</button>-->
-<!--        </nz-form-item >-->
+        <nz-form-item class="form-item">
+          <nz-form-label class="form-item-label" [nzSpan]="4">tags</nz-form-label>
+          <nz-form-control class="form-item-control-tag" [nzSpan]="20">
+            <div class="form-item-data-tag-wrap-div">
+              <nz-tag
+                [class]="!editMode ? 'form-item-data-tag' : ''"
+                *ngFor="let tag of arrayTypeDataDict['tags']; let i = index"
+                [nzColor]="'volcano'"
+                [nzMode]="editMode ? 'closeable' : 'default'"
+                (nzOnClose)="handleTagClose('tags',tag)"
+                nz-popover [nzPopoverContent]="popoverContentTemplate" [nzPopoverTrigger]="editMode ? 'click' : null"
+                (click)="startChangeCell(tag,i,'tags')"
+              >
+                {{ sliceDataName(tag) }}
+              </nz-tag>
+              <div *ngIf="editMode" style="display: inline-block">
+                <nz-tag *ngIf="!arrayTypeDataInputVisibleDict['tags']" class="form-item-data-new-tag" nzNoAnimation (click)="showDataInput('tags')">
+                  <i nz-icon nzType="plus"></i>
+                  New Tag
+                </nz-tag>
+                <input
+                  #tagInputElement
+                  nz-input
+                  nzSize="small"
+                  *ngIf="arrayTypeDataInputVisibleDict['tags']"
+                  type="text"
+                  [(ngModel)]="arrayTypeDataInputValueDict['tags']"
+                  style="width: 78px;height: 22px"
+                  (blur)="handleDataInputConfirm('tags')"
+                  (keydown.enter)="handleDataInputConfirm('tags')"
+                  [ngModelOptions]="{standalone: true}"
+                />
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
       </form>
     </div>
   </nz-content>
