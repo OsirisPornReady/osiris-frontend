@@ -19,7 +19,11 @@ export class DashboardComponent implements OnInit{
   isCollapsed = false;
   user!: User | null;
   // modalWidth:number = 1300;
-  isQuickDelete: boolean = false;
+  editThumbnail: boolean = false;
+  // userMenuStyle:any = {
+  //   'width': '500px'
+  // }
+  swapMethod:boolean = true;
 
 
   constructor(
@@ -31,7 +35,7 @@ export class DashboardComponent implements OnInit{
   ) { }
 
   ngOnInit() {
-    this.commonDataService.isQuickDelete = this.isQuickDelete; //this.switchQuickDelete(); 初始化的时候调整公共数据，并且要注意可读性
+    this.commonDataService.editThumbnail = this.editThumbnail; //this.switchQuickDelete(); 初始化的时候调整公共数据，并且要注意可读性
     this.user = this.userService.getCurrentUser();
   }
 
@@ -48,8 +52,12 @@ export class DashboardComponent implements OnInit{
     // })
   }
 
-  switchQuickDelete() {
-    this.commonDataService.isQuickDelete = this.isQuickDelete;
+  switchEditThumbnail() {
+    this.commonDataService.editThumbnail = this.editThumbnail;
+  }
+
+  switchSwapMethod() {
+    this.commonDataService.swapMethod = this.swapMethod ? 'select' : 'drag';
   }
 
   async signOut() {
@@ -57,4 +65,13 @@ export class DashboardComponent implements OnInit{
     this.router.navigate(['/login'])
   }
 
+  // manuallySetCdkOverlayContainer() {
+  //   this.showUserMenu = true
+  //   setTimeout(() => {
+  //     let CdkOverlayContainer:any = document.getElementsByClassName('cdk-overlay-container')[0]
+  //     console.log(CdkOverlayContainer.getElementsByClassName('user-menu')[0])
+  //     let userMenu = CdkOverlayContainer.getElementsByClassName('user-menu')[0]
+  //     userMenu.style.width = '500px'
+  //   },100)
+  // }
 }

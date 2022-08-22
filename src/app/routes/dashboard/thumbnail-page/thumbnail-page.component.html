@@ -1,24 +1,31 @@
 <div class="virtual-scroll-wrapper" (scroll)="onScroll($event)">
   <div #virtualScrollWrapper class="virtual-scroll">
-    <div #thumbnails nz-row class="thumbnail-grid">
-      <div nz-col [nzSpan]="3" *ngFor="let video of showItem;let i = index">
-        <nz-card class="thumbnail-card" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="selectVideo(video)">
-          <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
-        </nz-card>
-        <ng-template #coverTemplate>
-          <nz-badge [nzCount]="isQuickDelete ? deleteIconTemplate : 0">
-            <img style="display: block" [src]=video.thumbnail>
-          </nz-badge>
-          <ng-template #deleteIconTemplate>
-            <i
-              nz-icon
-              nzType="close-circle"
-              class="ant-scroll-number-custom-component"
-              style="color: #f5222d;font-size: 20px;z-index: 999"
-              (click)="quickDelete($event,video)"></i>
+    <div #thumbnails class="thumbnail-grid" cdkDropListGroup>
+
+      <div  nz-row
+           *ngFor="let row of showItem;let i = index"
+           cdkDropList cdkDropListOrientation="horizontal" [cdkDropListDisabled]="!(editThumbnail && swapMethod=='drag')"
+           (cdkDropListDropped)="dragdropVideo($event, row, i)">
+        <div nz-col [nzSpan]="3" *ngFor="let video of row;let i = index" cdkDrag [cdkDragDisabled]="!(editThumbnail && swapMethod=='drag')">
+          <nz-card class="thumbnail-card" [class.selected]="selectedVideoCard[video.id]" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="clickVideo($event,video)" >
+            <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
+          </nz-card>
+          <ng-template #coverTemplate>
+            <nz-badge [nzCount]="editThumbnail ? deleteIconTemplate : 0">
+              <img style="display: block" [src]=video.thumbnail>
+            </nz-badge>
+            <ng-template #deleteIconTemplate>
+              <i
+                nz-icon
+                nzType="close-circle"
+                class="ant-scroll-number-custom-component"
+                style="color: #f5222d;font-size: 20px;z-index: 999"
+                (click)="quickDelete($event,video)"></i>
+            </ng-template>
           </ng-template>
-        </ng-template>
+        </div>
       </div>
+
     </div>
   </div>
 </div>

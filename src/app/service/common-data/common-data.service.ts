@@ -6,7 +6,8 @@ import { Injectable } from '@angular/core';
 export class CommonDataService {
 
   debugMode:boolean = true;
-  isQuickDelete:boolean = false;
+  editThumbnail:boolean = false;
+  swapMethod:string = 'select';
   ws!: WebSocket;
 
   guardRedirects:any = {

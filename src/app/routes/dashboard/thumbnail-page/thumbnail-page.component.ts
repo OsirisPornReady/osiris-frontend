@@ -27,9 +27,22 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   // isVisible:boolean = false;
   // selectedVideoId?:number;
   // videos:any[] = [];
-  get isQuickDelete() {
-    return this.commonDataService.isQuickDelete;
+  get editThumbnail() {
+    if (!this.commonDataService.editThumbnail) {
+      this.videoSwapBuffer = [];
+      this.selectedVideoCard = {};
+    }
+    return this.commonDataService.editThumbnail;
   }
+  get swapMethod() {
+    if (this.commonDataService.swapMethod !== 'select') {
+      this.videoSwapBuffer = [];
+      this.selectedVideoCard = {};
+    }
+    return this.commonDataService.swapMethod;
+  }
+  videoSwapBuffer:any[] = [];
+  selectedVideoCard:any = {};
 
 
 
@@ -79,7 +92,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
         this.startIndex = 0
         this.endIndex = this.startIndex + this.showNumber;
-        this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
+        this.updateShowItem()
       }
     )
     await this.videoService.initVideoList();
@@ -98,7 +111,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
       this.renderer2.setStyle(this.thumbnails?.nativeElement,'transform',`translateY(${offsetY}px)`); //转移是必要的
       this.startIndex = Math.floor(e.target.scrollTop / this.itemHeight) * this.rowNumber; //完全翻越元素才更新
       this.endIndex = this.startIndex + this.showNumber;
-      this.showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
+      this.updateShowItem()
 
       this.lastTime = new Date().getTime();
     }
@@ -128,8 +141,82 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     // 3、this.startIndex + this.showNumber > this.videos.length //全取
   }
 
-  selectVideo(video:any) {
-    console.log('select video index:',video.id)
+  updateShowItem() {
+    const showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
+    const rowNum = Math.floor(showItem.length / 8);
+    const restDataNum = showItem.length % 8;
+    const newArray = [];
+    for (let i=0;i < rowNum;i++) {
+      newArray.push(showItem.slice(i * 8, i * 8 + 8));
+    }
+    if (restDataNum > 0) {
+      newArray.push(showItem.slice(rowNum * 8, rowNum * 8 + restDataNum));
+    }
+    this.showItem = newArray;
+  }
+
+  clickVideo(event:any,video:any) {
+    if (this.editThumbnail) {
+      if (this.swapMethod === 'select') {
+        this.selectVideo(event,video);
+      }
+    } else {
+      this.editVideo(video);
+    }
+  }
+
+  selectVideo(event:any,video:any) {
+    this.selectedVideoCard[video.id] = true;
+
+    if (this.videoSwapBuffer.length >=0 && this.videoSwapBuffer.length < 2) {
+      this.videoSwapBuffer.push(video);
+    }
+
+    if (this.videoSwapBuffer.length === 2) {
+      setTimeout(() => {
+        this.swapVideo();
+      },300);
+    }
+  }
+
+  swapVideo() {
+    const cVideo = this.videoSwapBuffer[1];
+    const pVideo = this.videoSwapBuffer[0];
+
+    let cIndex:number = -1;
+    let pIndex:number = -1;
+
+    this.videos.find((v:any,i:number) => {
+      if (v.id == cVideo.id) {
+        cIndex = i;
+        return true;
+      } else {
+        return false;
+      }
+    })
+
+    this.videos.find((v:any,i:number) => {
+      if (v.id == pVideo.id) {
+        pIndex = i;
+        return true;
+      } else {
+        return false;
+      }
+    })
+
+    let temp = this.videos[pIndex];
+    this.videos[pIndex] = this.videos[cIndex];
+    this.videos[cIndex] = temp;
+    this.videoSwapBuffer = [];
+    this.updateShowItem();
+    this.selectedVideoCard = {};
+
+    console.log('交换成功')
+  }
+
+  editVideo(video:any) {
+    if (this.editThumbnail) { return; } //修改thumbnail的时候不弹出
+    console.log('select video index:',video.id);
     this.modalService.create({
       nzContent:VideoDetailComponent,
       nzComponentParams: {
@@ -150,6 +237,15 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
   quickDelete(e:any,video:any) {
     e.stopPropagation();
+    // if (video.id === this.videoSwapBuffer[0].id) { //|| this.videoSwapBuffer[1].id == video.id 只用检查一个,如果有两个早换了,也不用foreach什么的
+    //   this.videoSwapBuffer = []; //比pop安全
+    // }
+    //忽略了数组为空的情况
+    this.videoSwapBuffer.forEach(v => {
+      if (video.id === v.id) {
+        this.videoSwapBuffer = []; //比pop安全
+      }
+    })
     this.videoService.deleteVideo(video.id);
   }
 
@@ -157,8 +253,76 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     this.videoListSubscription.unsubscribe();
   }
 
+  dragdropVideo(event:any, row:any, index:number) {
+    console.log(event)
+    console.log(index)
+    this.moveItemInArray(row, index, event.previousIndex, event.currentIndex, event.previousContainer, event.container)
+  }
+
+  moveItemInArray(row:any, index:number, previousIndex: number, currentIndex: number, PreviousContainer:any, Container:any) {
+    if (PreviousContainer === Container) {
+      let pIndex:number = -1;
+      let cIndex:number = -1;
+
+      this.videos.find((v:any,i:number) => {
+        if (v.id == row[previousIndex].id) {
+          pIndex = i;
+          return true;
+        } else {
+          return false;
+        }
+      })
+
+      this.videos.find((v:any,i:number) => {
+        if (v.id == row[currentIndex].id) {
+          cIndex = i;
+          return true;
+        } else {
+          return false;
+        }
+      })
 
 
+      let temp = this.videos[pIndex]
+      this.videos[pIndex] = this.videos[cIndex];
+      this.videos[cIndex] = temp;
+      // [this.videos[pIndex], this.videos[cIndex]] = [this.videos[cIndex], this.videos[pIndex]];
+    } else {
+      console.log('haha')
+      const cRow = this.showItem[index];
+      const re = parseInt(PreviousContainer.id.replace('cdk-drop-list-','')) - parseInt(Container.id.replace('cdk-drop-list-',''));
+      const pRow = this.showItem[index + re];
+      console.log('cRow',cRow)
+      console.log('pRow',pRow)
 
+
+      let cIndex:number = -1;
+      let pIndex:number = -1;
+
+      this.videos.find((v:any,i:number) => {
+        if (v.id == cRow[currentIndex].id) {
+          cIndex = i;
+          return true;
+        } else {
+          return false;
+        }
+      })
+
+      this.videos.find((v:any,i:number) => {
+        if (v.id == pRow[previousIndex].id) {
+          pIndex = i;
+          return true;
+        } else {
+          return false;
+        }
+      })
+
+
+      let temp = this.videos[pIndex]
+      this.videos[pIndex] = this.videos[cIndex];
+      this.videos[cIndex] = temp;
+    }
+    this.updateShowItem();
+  }
 
 }

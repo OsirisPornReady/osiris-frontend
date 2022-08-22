@@ -57,14 +57,28 @@
         <button *aclIf="'create'" nz-button type="button" nzType="primary" class="video-add-button" (click)="addVideo()">add video</button>
         <nz-switch
           *aclIf="'delete'"
-          [(ngModel)]="isQuickDelete"
+          [(ngModel)]="editThumbnail"
           nzCheckedChildren="QD"
           nzUnCheckedChildren="NV"
-          class="quick-delete-switch"
-          (ngModelChange)="switchQuickDelete()">
+          class="edit-thumbnail-switch"
+          (ngModelChange)="switchEditThumbnail()">
+        </nz-switch>
+        <nz-switch
+          *aclIf="'update'"
+          [nzDisabled]="!editThumbnail"
+          [(ngModel)]="swapMethod"
+          nzCheckedChildren="SL"
+          nzUnCheckedChildren="DG"
+          class="swap-method-switch"
+          (ngModelChange)="switchSwapMethod()">
         </nz-switch>
         <nz-badge [nzCount]="user ? user.messageCount : -1" class="user-avatar">
           <nz-avatar nzIcon="user" [nzShape]="'circle'" nz-dropdown [nzTrigger]="'click'" [nzDropdownMenu]="userMenu" class="user-head"></nz-avatar>
+<!--          <nz-avatar nzIcon="user" [nzShape]="'circle'" class="user-head"-->
+<!--                     nz-popover [nzPopoverContent]="userMenu" [nzPopoverTrigger]="'click'" nzPopoverPlacement="bottomRight"-->
+<!--                     ></nz-avatar>-->
+<!--          [nzPopoverOverlayStyle]="userMenuStyle"-->
+<!--          (click)="manuallySetCdkOverlayContainer()"-->
         </nz-badge>
         <nz-dropdown-menu #userMenu="nzDropdownMenu">
           <ul nz-menu nzSelectable>
@@ -74,6 +88,14 @@
             <li nz-menu-item nzDanger (click)="signOut()">Sign out</li>
           </ul>
         </nz-dropdown-menu>
+<!--        <ng-template #userMenu >-->
+<!--          <ul nz-menu>-->
+<!--            <li nz-menu-item>Your Profile</li>-->
+<!--            <li nz-menu-item>Your Videos</li>-->
+<!--            <li nz-menu-item>Settings</li>-->
+<!--            <li nz-menu-item nzDanger (click)="signOut()">Sign out</li>-->
+<!--          </ul>-->
+<!--        </ng-template>-->
       </div>
     </nz-header>
     <nz-content>

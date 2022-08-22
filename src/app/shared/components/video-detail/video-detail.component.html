@@ -46,6 +46,7 @@
           [(nzFileList)]="imageList"
           [nzShowUploadList]="false"
           [nzShowButton]="imageList.length < 1"
+          [nzBeforeUpload]="beforeUploadThumbnail"
           (nzChange)="uploadImage($event)"
         >
           <button nz-button type="button" nzType="dashed" class="upload-image-button">upload</button>
@@ -133,8 +134,10 @@
           <nz-form-label class="form-item-label" [nzSpan]="4">tags</nz-form-label>
           <nz-form-control class="form-item-control-tag" [nzSpan]="20">
             <div class="form-item-data-tag-wrap-div">
+<!--              [class]="!editMode ? 'form-item-data-tag' : ''" 原nztag的样式,现在不切换样式,仅切换方法-->
+<!--              好像nz自己做了停止冒泡处理-->
               <nz-tag
-                [class]="!editMode ? 'form-item-data-tag' : ''"
+                class="form-item-data-tag"
                 *ngFor="let tag of arrayTypeDataDict['tags']; let i = index"
                 [nzColor]="'volcano'"
                 [nzMode]="editMode ? 'closeable' : 'default'"

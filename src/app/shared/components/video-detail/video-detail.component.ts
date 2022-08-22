@@ -222,6 +222,10 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
     this.isImageFold = !this.isImageFold;
   }
 
+  beforeUploadThumbnail(file: NzUploadFile): boolean {
+    console.log(file)
+    return true;
+  }
 
   uploadImage(event:any) {
     if (event.type === 'success') {
