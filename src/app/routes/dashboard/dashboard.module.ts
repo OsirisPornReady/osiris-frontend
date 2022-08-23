@@ -43,6 +43,7 @@ import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {NzPopoverModule} from "ng-zorro-antd/popover";
 import {NzUploadFile, NzUploadModule} from "ng-zorro-antd/upload";
+import {NzDrawerModule} from "ng-zorro-antd/drawer";
 
 import { DragDropModule } from "@angular/cdk/drag-drop";
 
@@ -86,6 +87,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
         NzEmptyModule,
         NzPopoverModule,
         NzUploadModule,
+        NzDrawerModule,
         DragDropModule,
     ],
   providers: [

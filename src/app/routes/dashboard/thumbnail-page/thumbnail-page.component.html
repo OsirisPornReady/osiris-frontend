@@ -7,6 +7,11 @@
            cdkDropList cdkDropListOrientation="horizontal" [cdkDropListDisabled]="!(editThumbnail && swapMethod=='drag')"
            (cdkDropListDropped)="dragdropVideo($event, row, i)">
         <div nz-col [nzSpan]="3" *ngFor="let video of row;let i = index" cdkDrag [cdkDragDisabled]="!(editThumbnail && swapMethod=='drag')">
+
+<!--          <div *cdkDragPlaceholder class="drag-placeholder">-->
+<!--            <div class="drag-placeholder-inner"></div>-->
+<!--          </div>-->
+
           <nz-card class="thumbnail-card" [class.selected]="selectedVideoCard[video.id]" nzSize="small" nzHoverable [nzCover]="coverTemplate" (click)="clickVideo($event,video)" >
             <nz-card-meta [nzTitle]="video.title" nzDescription="www.instagram.com"></nz-card-meta>
           </nz-card>

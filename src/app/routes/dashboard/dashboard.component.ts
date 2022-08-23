@@ -60,6 +60,10 @@ export class DashboardComponent implements OnInit{
     this.commonDataService.swapMethod = this.swapMethod ? 'select' : 'drag';
   }
 
+  openUserInfo() {
+
+  }
+
   async signOut() {
     await this.userService.signOut();
     this.router.navigate(['/login'])
