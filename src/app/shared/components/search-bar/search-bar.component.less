@@ -1,23 +1,77 @@
 @search-bar-height: 40px;
 @search-bar-width: 600px;
 
-nz-input-group {
-  max-width: @search-bar-width;
+//nz-input-group {
+//  max-width: @search-bar-width;
+//}
+//
+//input {
+//  height: @search-bar-height;
+//}
+
+//button {
+//  width: 80px;
+//  height: @search-bar-height;
+//}
+
+//:host {
+//  margin: 0;
+//  padding: 0;
+//  display: inline-block;
+//  width: @search-bar-width;
+//  height: @search-bar-height;
+//}
+
+.config-button {
+  border-radius: 8px 0 0 8px ;
 }
 
-input {
-  height: @search-bar-height;
+.content-input-group {
+  width: 60%;
+  margin: 0 auto;
+  background-color: #f2f3f4;
+  border-radius: 0 8px 8px 0;
+
+  &:hover {
+    background-color: white;
+    .content-input {
+      background-color: white;
+    }
+  }
 }
 
-button {
-  width: 80px;
-  height: @search-bar-height;
+.content-input {
+  background-color: #f2f3f4;
 }
 
-:host {
+//.content-input-group:hover {
+//  background-color: white;
+//  .content-input {
+//    background-color: white;
+//  }
+//}
+
+.search-box {
+  position: relative;
   margin: 0;
   padding: 0;
-  display: inline-block;
-  width: @search-bar-width;
-  height: @search-bar-height;
+}
+
+.criteria-panel {
+  position: absolute;
+  left: 21%;
+  top: 75px;
+
+  width: 50%;
+
+
+  transform-origin: 50% top ; //50% 0
+  //border: 1px solid dodgerblue;
+  border-radius: 8px 8px 8px 8px;
+  box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.5);
+
+  padding: 10px;
+  background-color: white;
+
+
 }

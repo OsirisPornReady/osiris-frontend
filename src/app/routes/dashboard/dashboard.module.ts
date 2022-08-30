@@ -19,7 +19,8 @@ import { ThumbnailPageComponent } from './thumbnail-page/thumbnail-page.componen
 import { VideoDetailComponent } from '../../shared/components/video-detail/video-detail.component';
 import { SearchBarComponent } from "../../shared/components/search-bar/search-bar.component";
 import { CriteriaBarComponent } from "../../shared/components/criteria-bar/criteria-bar.component";
-import { MultiConditionSearchPageComponent } from './multi-condition-search-page/multi-condition-search-page.component';
+import { MultiConditionSearchPageComponent } from '../../shared/components/multi-condition-search-page/multi-condition-search-page.component';
+import { UserInfoComponent } from "../../shared/components/user-info/user-info.component";
 
 import { AclIfDirective } from "../../directive/acl-if.directive";
 
@@ -56,6 +57,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     SearchBarComponent,
     CriteriaBarComponent,
     MultiConditionSearchPageComponent,
+    UserInfoComponent,
     AclIfDirective,
   ],
     imports: [

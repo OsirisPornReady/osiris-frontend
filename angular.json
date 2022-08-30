@@ -80,6 +80,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "osiris-frontend:build",
+            "port": 4222,
             "proxyConfig": "proxy.conf.json"
           },
           "configurations": {

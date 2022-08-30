@@ -1,20 +1,52 @@
-<nz-input-group nzSearch [nzAddOnBefore]="addOnBeforeTemplate" [nzAddOnAfter]="suffixIconButton">
-  <input type="text" nz-input [(ngModel)]="searchContent" placeholder="search text">
-</nz-input-group>
-<!--nzSize="large"-->
+<div style="">
 
-<ng-template #addOnBeforeTemplate>
-  <nz-select  [ngModel]="'Http://'">
-    <nz-option nzLabel="Http://" nzValue="Http://"></nz-option>
-    <nz-option nzLabel="Https://" nzValue="Https://"></nz-option>
-  </nz-select>
-</ng-template>
-<!--nzSize="large"-->
+  <div nz-row>
+    <div class="search-box" nz-col [nzSpan]="24">
+      <button nz-button nzType="primary" nzSize="large" class="config-button" (click)="showCriteria()">
+        <span nz-icon nzType="setting" nzTheme="outline"></span>
+      </button>
+      <nz-input-group nzSize="large" [nzSuffix]="inputClearTpl" class="content-input-group">
+        <input nz-input nzSize="large" [(ngModel)]="searchContent" class="content-input">
+      </nz-input-group>
+      <ng-template #inputClearTpl>
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            *ngIf="searchContent"
+            (click)="searchContent = ''"
+          ></span>
+      </ng-template>
+    </div>
+  </div>
 
-<ng-template #suffixIconButton>
-  <button type="button" nz-button nzSearch (click)="commitSearch()">Search</button>
-</ng-template>
-<!--nzType="primary"-->
+  <div nz-row>
+    <div class="criteria-panel" *ngIf="criteriaVisible" @slide-down nz-col [nzSpan]="24">
+      <multi-condition-search-page></multi-condition-search-page>
+    </div>
+  </div>
+
+</div>
+
+
+<!--<nz-input-group nzSearch [nzAddOnBefore]="addOnBeforeTemplate" [nzAddOnAfter]="suffixIconButton">-->
+<!--  <input type="text" nz-input [(ngModel)]="searchContent" placeholder="search text">-->
+<!--</nz-input-group>-->
+<!--&lt;!&ndash;nzSize="large"&ndash;&gt;-->
+
+<!--<ng-template #addOnBeforeTemplate>-->
+<!--  <nz-select  [ngModel]="'Http://'">-->
+<!--    <nz-option nzLabel="Http://" nzValue="Http://"></nz-option>-->
+<!--    <nz-option nzLabel="Https://" nzValue="Https://"></nz-option>-->
+<!--  </nz-select>-->
+<!--</ng-template>-->
+<!--&lt;!&ndash;nzSize="large"&ndash;&gt;-->
+
+<!--<ng-template #suffixIconButton>-->
+<!--  <button type="button" nz-button nzSearch (click)="commitSearch()">Search</button>-->
+<!--</ng-template>-->
+<!--&lt;!&ndash;nzType="primary"&ndash;&gt;-->
 
 
 

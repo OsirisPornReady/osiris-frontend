@@ -7,6 +7,8 @@ import { Router, ActivatedRoute } from "@angular/router";
 import {VideoDetailComponent} from "../../shared/components/video-detail/video-detail.component";
 import { NzModalService } from "ng-zorro-antd/modal";
 import { CommonDataService } from "../../service/common-data/common-data.service";
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import {UserInfoComponent} from "../../shared/components/user-info/user-info.component";
 
 
 @Component({
@@ -32,6 +34,7 @@ export class DashboardComponent implements OnInit{
     private router: Router,
     private modalService: NzModalService,
     private commonDataService: CommonDataService,
+    private drawerService: NzDrawerService,
   ) { }
 
   ngOnInit() {
@@ -61,6 +64,19 @@ export class DashboardComponent implements OnInit{
   }
 
   openUserInfo() {
+    const drawerRef = this.drawerService.create<UserInfoComponent, { value: string }, string>({
+      nzTitle: 'Component',
+      nzFooter: 'Footer',
+      // nzExtra: 'Extra', //12版本未存在此选项
+      nzPlacement: 'right',
+      nzWidth: 450,
+      nzClosable: false,
+      nzMaskClosable: true,
+      nzKeyboard: true,
+      nzContent: UserInfoComponent,
+      nzContentParams: {
+      }
+    });
 
   }
 

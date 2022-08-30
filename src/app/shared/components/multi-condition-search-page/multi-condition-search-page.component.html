@@ -1,0 +1,55 @@
+<!--<criteria-bar *ngFor="let criteria of criteriaList;let i = index" [criteria]="criteria" [conditionList]="conditionList"></criteria-bar>-->
+
+<div style="width: 100%">
+  <form nz-form [formGroup]="criteriaForm" (ngSubmit)="saveCriteriaList()">
+
+    <div class="criteria-div" *ngIf="listOfControl.length">
+      <nz-form-item *ngFor="let control of listOfControl" class="criteria-item">
+        <nz-form-label class="criteria-label" [nzSpan]="4">搜索条件</nz-form-label>
+        <nz-form-control class="criteria-control" [nzSpan]="20">
+
+          <div [formGroupName]="control.controlInstance" nz-row>
+            <nz-input-group nzSearch nzSize="default" [nzAddOnBefore]="addOnBeforeTemplate" nz-col [nzSpan]="20">
+              <ng-template #addOnBeforeTemplate>
+                <nz-select nzSize="default" [nzDropdownMatchSelectWidth]="false" formControlName="condition" [nzPlaceHolder]="conditionPlaceHolder">
+                  <nz-option *ngFor="let condition of conditionList" [nzLabel]="condition" [nzValue]="condition"></nz-option>
+                </nz-select>
+              </ng-template>
+              <input type="text" nzSize="default" [attr.id]="control.id" nz-input formControlName="content" [placeholder]="contentPlaceHolder">
+            </nz-input-group>
+            <div nz-col [nzSpan]="4" class="criteria-delete-div">
+              <i nz-icon nzType="delete" class="criteria-delete-icon" (click)="removeCriteria(control, $event)"></i>
+            </div>
+          </div>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <nz-form-item class="button-item">
+      <nz-form-control class="button-control">
+        <div nz-row>
+          <div nz-col [nzSpan]="12" style="text-align: left">
+            <button nz-button type="button" nzType="default" class="criteria-reset-button" (click)="resetCriteriaList()">reset</button>
+          </div>
+          <div nz-col [nzSpan]="12" style="text-align: right">
+            <nz-space>
+              <button *nzSpaceItem nz-button type="button" nzType="dashed" class="criteria-add-button" (click)="createCriteria($event)">
+                <i nz-icon nzType="plus"></i>
+                Add field
+              </button>
+              <button *nzSpaceItem nz-button type="submit" nzType="primary" [nzLoading]="saveLoading" class="criteria-save-button">save</button>
+            </nz-space>
+          </div>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+
+  <!--  submit事件触发的函数写在button这也行，这样可以放在form外面，但就不算submit，得手动获取值-->
+  </form>
+</div>
+
+
+
+
+
