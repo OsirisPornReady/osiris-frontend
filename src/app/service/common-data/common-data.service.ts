@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -15,5 +16,16 @@ export class CommonDataService {
     dashboardLazyLoad: '/login',
   }
 
-  constructor() { }
+  constructor(
+    private httpClient: HttpClient,
+  ) { }
+
+  async syncGlobalConfig() {
+    try {
+      const globalConfig:any = await this.httpClient.get('/ajax/projectSetting/getGlobalConfig').toPromise();
+      this.debugMode = globalConfig.debugMode;
+    } catch (e) {
+      console.log('服务器无法连接,未获取到全局设置');
+    }
+  }
 }

@@ -74,8 +74,12 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
   }
 
+  ngOnInit() {   //将ngOnInit声明为async,在其中await并没有什么用,程序并不会wait它,用这种方式才会wait
+    this.Init();
+  }
 
-  async ngOnInit() { //不阻塞的话就直接返回本地测试数据了
+
+  async Init() { //不阻塞的话就直接返回本地测试数据了
     this.videoListSubscription = this.videoService.videoListStream$.subscribe(
       (next:any) => {
         // this._videos = next;

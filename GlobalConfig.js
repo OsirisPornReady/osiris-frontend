@@ -1,3 +1,4 @@
+//deprecated
 var GlobalConfig = {
   debugMode: true,
 }
