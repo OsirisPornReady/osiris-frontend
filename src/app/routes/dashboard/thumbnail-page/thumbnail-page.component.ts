@@ -48,7 +48,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
 //--------------------------------虚拟滚动相关-----------------------------------------
   rowNumber = 8; //单行元素数
-  itemHeight:number = 186; //单个元素的高度
+  itemHeight:number = 243; //单个元素的高度 186  一定要选紧贴边缘的元素高度,这是变化的分界线,大于或小于实际元素都会有问题
   showHeight!:number; //可见区域的高度
   showNumber!:number; //可见区域能容纳的元素最大数量
   showItem:any[] = []; //容纳当前可见元素
@@ -56,6 +56,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   endIndex!:number; //虚拟窗口尾索引
   totalHeight!:number; //总高度
   lastTime:any = new Date().getTime();
+  currentScrollTop:number = 0; //用来在改动表数据时保持scrollTop不变
 //--------------------------------虚拟滚动相关-----------------------------------------
 
 
@@ -93,7 +94,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
         this.videos = next;
         console.log(this.videos)
         const videoNum = this.videos.length
-        this.totalHeight = ( Math.floor(videoNum / this.rowNumber) + (videoNum % this.rowNumber > 0 ? 1 : 0) ) * this.itemHeight + 50 ; //考虑到占不满一行的情况下，当前videos能填满几行,增加尾部余量以防最后加载不出来
+        this.totalHeight = ( Math.floor(videoNum / this.rowNumber) + (videoNum % this.rowNumber > 0 ? 1 : 0) ) * this.itemHeight + 30; //考虑到占不满一行的情况下，当前videos能填满几行,增加尾部余量以防最后加载不出来
         this.showHeight = window.innerHeight - 64 - 24 * 2; //可以减也可以不减padding
         this.showNumber = Math.floor(this.showHeight / this.itemHeight) * this.rowNumber + this.rowNumber; //maxRow * rowNum + 上下边缘截取的余量
         this.renderer2.setStyle(this.virtualScrollWrapper?.nativeElement,'height',this.totalHeight + 'px'); //布置虚拟高度
@@ -101,22 +102,35 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
         this.startIndex = 0
         this.endIndex = this.startIndex + this.showNumber;
-        this.updateShowItem()
+        this.setScrollTop(this.currentScrollTop);
+        this.updateShowItem();
+
       }
     )
     await this.videoService.initVideoList();
     this.videoService.pushVideoList();
   }
 
+
+  setScrollTop(scrollTop: number) {  //增删视频的时候保持滚动条位置不变,主要是增,减的时候会自动触发onscroll事件
+    const offsetY = scrollTop - (scrollTop % this.itemHeight); //安全一点的写法，尽量避免浮点数
+    this.renderer2.setStyle(this.thumbnails?.nativeElement,'transform',`translateY(${offsetY}px)`); //转移是必要的
+    this.startIndex = Math.floor(scrollTop / this.itemHeight) * this.rowNumber; //完全翻越元素才更新
+    this.endIndex = this.startIndex + this.showNumber;
+  }
+
+
   onScroll(e?:any) {
     if (!e) {
       return;
     }
 
+    this.currentScrollTop = e.target.scrollTop;
+
     if (new Date().getTime() - this.lastTime > 15) {  //简易节流实现
       console.log('top',e.target.scrollTop);
       // const offsetY = Math.floor(e.target.scrollTop / this.itemHeight) * this.itemHeight;
-      const offsetY = e.target.scrollTop - (e.target.scrollTop % this.itemHeight); //安全一点的写法，尽量避免浮点数
+      const offsetY = e.target.scrollTop - (e.target.scrollTop % this.itemHeight); //安全一点的写法，尽量避免浮点数 0 mod any = 0
       this.renderer2.setStyle(this.thumbnails?.nativeElement,'transform',`translateY(${offsetY}px)`); //转移是必要的
       this.startIndex = Math.floor(e.target.scrollTop / this.itemHeight) * this.rowNumber; //完全翻越元素才更新
       this.endIndex = this.startIndex + this.showNumber;
@@ -150,7 +164,10 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     // 3、this.startIndex + this.showNumber > this.videos.length //全取
   }
 
-  updateShowItem() {
+  //引发updateShowItem()的应该有两种事件:
+  // 1.scroll,此时startIndex和endIndex变化,故窗口要重新绘制
+  // 2.this.videos内容发生改变,故窗口要重新绘制,此处还有另一个问题忽略了:内容可以增删改查,故窗口大小和位置也有可能改变,就算窗口不变,virtualScroll也会变
+  updateShowItem() {  //该函数只涉及thumbnail grid的内容改变,不改变位置等信息
     const showItem = [...this.videos.slice(this.startIndex,this.endIndex)];
     const rowNum = Math.floor(showItem.length / 8);
     const restDataNum = showItem.length % 8;
@@ -164,6 +181,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     this.showItem = newArray;
   }
 
+
   clickVideo(event:any,video:any) {
     if (this.editThumbnail) {
       if (this.swapMethod === 'select') {
@@ -173,6 +191,7 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
       this.editVideo(video);
     }
   }
+
 
   selectVideo(event:any,video:any) {
     this.selectedVideoCard[video.id] = true;
@@ -188,7 +207,8 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     }
   }
 
-  swapVideo() {
+
+  async swapVideo() {
     const cVideo = this.videoSwapBuffer[1];
     const pVideo = this.videoSwapBuffer[0];
 
@@ -213,15 +233,21 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
       }
     })
 
-    let temp = this.videos[pIndex];
-    this.videos[pIndex] = this.videos[cIndex];
-    this.videos[cIndex] = temp;
-    this.videoSwapBuffer = [];
-    this.updateShowItem();
-    this.selectedVideoCard = {};
+    try {
+      await this.videoService.swapVideoOrder(this.videos[pIndex].id, pIndex, this.videos[cIndex].id, cIndex)
+      // let temp = this.videos[pIndex];
+      // this.videos[pIndex] = this.videos[cIndex];
+      // this.videos[cIndex] = temp;
+      this.videoSwapBuffer = [];
+      // this.updateShowItem();
+      this.selectedVideoCard = {};
 
-    console.log('交换成功')
+      console.log('交换成功')
+    } catch (e) {
+      console.log('交换失败')
+    }
   }
+
 
   editVideo(video:any) {
     if (this.editThumbnail) { return; } //修改thumbnail的时候不弹出
@@ -262,9 +288,11 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     }
   }
 
+
   ngOnDestroy() {
     this.videoListSubscription.unsubscribe();
   }
+
 
   dragdropVideo(event:any, row:any, index:number) {
     console.log(event)
@@ -272,7 +300,8 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
     this.moveItemInArray(row, index, event.previousIndex, event.currentIndex, event.previousContainer, event.container)
   }
 
-  moveItemInArray(row:any, index:number, previousIndex: number, currentIndex: number, PreviousContainer:any, Container:any) {
+
+  async moveItemInArray(row:any, index:number, previousIndex: number, currentIndex: number, PreviousContainer:any, Container:any) {
     if (PreviousContainer === Container) {
       let pIndex:number = -1;
       let cIndex:number = -1;
@@ -296,10 +325,16 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
       })
 
 
-      let temp = this.videos[pIndex]
-      this.videos[pIndex] = this.videos[cIndex];
-      this.videos[cIndex] = temp;
-      // [this.videos[pIndex], this.videos[cIndex]] = [this.videos[cIndex], this.videos[pIndex]];
+      try {
+        await this.videoService.swapVideoOrder(this.videos[pIndex].id, pIndex, this.videos[cIndex].id, cIndex)
+        // let temp = this.videos[pIndex];
+        // this.videos[pIndex] = this.videos[cIndex];
+        // this.videos[cIndex] = temp;
+        // [this.videos[pIndex], this.videos[cIndex]] = [this.videos[cIndex], this.videos[pIndex]];
+        console.log('交换成功')
+      } catch (e) {
+        console.log('交换失败')
+      }
     } else {
       console.log('haha')
       const cRow = this.showItem[index];
@@ -331,9 +366,16 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
       })
 
 
-      let temp = this.videos[pIndex]
-      this.videos[pIndex] = this.videos[cIndex];
-      this.videos[cIndex] = temp;
+      try {
+        await this.videoService.swapVideoOrder(this.videos[pIndex].id, pIndex, this.videos[cIndex].id, cIndex)
+        // let temp = this.videos[pIndex];
+        // this.videos[pIndex] = this.videos[cIndex];
+        // this.videos[cIndex] = temp;
+
+        console.log('交换成功')
+      } catch (e) {
+        console.log('交换失败')
+      }
     }
     this.updateShowItem();
   }

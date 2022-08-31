@@ -1,5 +1,6 @@
 export class Video {
   id:number;
+  order:number;
   title:string;
   stars:string[];
   thumbnail:string;
@@ -9,6 +10,7 @@ export class Video {
 
   constructor(
     id:number = -1,
+    order:number = 0,
     title:string = '',
     stars:string[] = [],
     thumbnail:string = '',
@@ -17,6 +19,7 @@ export class Video {
     date:Date = new Date()
   ) {
     this.id = id;
+    this.order = order;
     this.title = title;
     this.stars = stars;
     this.thumbnail = thumbnail;

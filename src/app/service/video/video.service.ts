@@ -21,6 +21,7 @@ export class VideoService {
   videoList:any = [
     new Video(
       0,
+      0,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -29,6 +30,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      1,
       1,
       'Good Morning',
       ['Kanye West'],
@@ -39,6 +41,7 @@ export class VideoService {
     ),
     new Video(
       2,
+      2,
       'Prey',
       ['Mick Gordon'],
       '/assets/prey.jpg',
@@ -47,6 +50,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      3,
       3,
       'Sad Machine',
       ['Porter Robinson'],
@@ -57,6 +61,7 @@ export class VideoService {
     ),
     new Video(
       4,
+      4,
       'Snow Crash',
       ['Mitch Murder'],
       '/assets/snow crash.jpg',
@@ -65,6 +70,7 @@ export class VideoService {
        new Date(2022,7,26),
     ),
     new Video(
+      5,
       5,
       'Sakanaction',
       ['サカナクション',],
@@ -75,6 +81,7 @@ export class VideoService {
     ),
     new Video(
       6,
+      6,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -83,6 +90,7 @@ export class VideoService {
       new Date(2022,7,26),
     ),
     new Video(
+      7,
       7,
       'Down Under',
       ['Luude','Colin'],
@@ -93,6 +101,7 @@ export class VideoService {
     ),
     new Video(
       8,
+      8,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -101,6 +110,7 @@ export class VideoService {
       new Date(2022,7,26),
     ),
     new Video(
+      9,
       9,
       'Down Under',
       ['Luude','Colin'],
@@ -111,6 +121,7 @@ export class VideoService {
     ),
     new Video(
       10,
+      10,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -119,6 +130,7 @@ export class VideoService {
       new Date(2022,7,26),
     ),
     new Video(
+      11,
       11,
       'Down Under',
       ['Luude','Colin'],
@@ -129,6 +141,7 @@ export class VideoService {
     ),
     new Video(
       12,
+      12,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -137,6 +150,7 @@ export class VideoService {
       new Date(2022,7,26),
     ),
     new Video(
+      13,
       13,
       'Down Under',
       ['Luude','Colin'],
@@ -147,6 +161,7 @@ export class VideoService {
     ),
     new Video(
       14,
+      14,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -155,6 +170,7 @@ export class VideoService {
       new Date(2022,7,26),
     ),
     new Video(
+      15,
       15,
       'Down Under',
       ['Luude','Colin'],
@@ -165,6 +181,7 @@ export class VideoService {
     ),
     new Video(
       16,
+      16,
       'Down Under',
       ['Luude','Colin'],
       '/assets/down under.jpg',
@@ -173,6 +190,7 @@ export class VideoService {
       new Date(2022,7,26),
     ),
     new Video(
+      17,
       17,
       'Down Under',
       ['Luude','Colin'],
@@ -299,6 +317,23 @@ export class VideoService {
     }
   }
 
+  private swapVideo(pIndex: number, cIndex: number): boolean {
+    try {
+      let pOrder = this.videoList[pIndex].order;
+      this.videoList[pIndex].order = this.videoList[cIndex].order;
+      this.videoList[cIndex].order = pOrder;
+
+      let temp = this.videoList[pIndex];
+      this.videoList[pIndex] = this.videoList[cIndex];
+      this.videoList[cIndex] = temp;
+      this.pushVideoList();
+      return true;
+    } catch (e) {
+      console.log(e)
+      return false;
+    }
+  }
+
   pushVideo(index:number): void {
     try {
       // key:any
@@ -358,9 +393,9 @@ export class VideoService {
       });
       let res:any = await this.http.post('/ajax/video/createVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
       newVideo.id = res.id;
-      this.addVideo(newVideo);
-      console.log(`video(id:${res.id})视频新增成功`,res);
-      return true;
+      console.log(`[Database] video(id:${res.id})视频新增成功`,res);
+      return this.addVideo(newVideo);
+      // return true;
     } catch (e) {
       console.log('新增视频失败');
       console.log(e);
@@ -385,9 +420,9 @@ export class VideoService {
         video: value,
       });
       let res:any = await this.http.post('/ajax/video/updateVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
-      this.setVideo(id,value);
-      console.log(`video(id:${id})视频信息修改成功`,res);
-      return true;
+      console.log(`[Database] video(id:${id})视频信息修改成功`,res);
+      return this.setVideo(id,value);
+      // return true;
     } catch (e) {
       console.log('更新视频信息失败');
       console.log(e);
@@ -407,15 +442,38 @@ export class VideoService {
         id: id,
       });
       let res:any = await this.http.post('/ajax/video/deleteVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
-      this.removeVideo(id);
-      console.log(`video(id:${id})视频删除成功`,res);
-      return true;
+      console.log(`[Database] video(id:${id})视频删除成功`,res);
+      return this.removeVideo(id);
+      // return true;
     } catch (e) {
       console.log('删除视频失败')
       console.log(e)
       return false;
     }
 
+  }
+
+  async swapVideoOrder(pid: number, pIndex: number, cid:number, cIndex: number): Promise<any> {
+    //调试模式
+    if (this.commonDataService.debugMode) {
+      return this.swapVideo(pIndex,cIndex);
+    }
+
+    //发送交换顺序请求
+    try {
+      const data = JSON.stringify({
+        pid: pid,
+        cid: cid,
+      });
+      let res:any = await this.http.post('/ajax/video/swapVideoOrder',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      console.log(`[Database] video(id:${pid})和video(id:${cid})位置交换成功`,res);
+      return this.swapVideo(pIndex,cIndex);
+      // return true;
+    } catch (e) {
+      console.log('交换位置失败');
+      console.log(e);
+      return false;
+    }
   }
 //----------------------------------------------------------------------------------
 
