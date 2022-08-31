@@ -283,9 +283,9 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   }
 
 
-  async applyChange(): Promise<void> {
+  async applyChange() {  //: Promise<void> 这些方法也只是起到错误处理的作用,并不需要返回值,直接让ts类型推断即可
     try {
-      this.videoService.updateVideo(this.VideoId,this.video);
+      await this.videoService.updateVideo(this.VideoId,this.video);
       this.loading = true;
       setTimeout(() => {
         this.loading = false;

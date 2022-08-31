@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonDataService } from "./service/common-data/common-data.service";
+import { UserService } from "./service/user/user.service";
 
 
 // // @ts-ignore
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private commonDataService: CommonDataService,
+    private userService: UserService,
   ) { }
 
   title = 'ng-zorro-test'
@@ -55,14 +57,26 @@ export class AppComponent implements OnInit {
     //
     // });
 
-
     await this.commonDataService.syncGlobalConfig();
+    if (this.commonDataService.debugMode) {
+        const user = {
+        "username":"admin",
+        "password":"123456",
+        "authority":{
+          "create":true,
+          "retrieve":true,
+          "update":true,
+          "delete":true
+        },
+        "messageCount": 10
+      }
+      this.userService.setCurrentUser(user)
+    }
 
   }
 
   // async initGlobalConfig(): Promise<void> {
   //   await this.commonDataService.syncGlobalConfig();
   // }
-
 
 }
