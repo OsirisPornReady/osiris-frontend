@@ -32,8 +32,8 @@ export function initAppDataFactory(commonDataService: CommonDataService,userServ
       userService.setCurrentUser(user)
     }
 
-    console.log('debug',commonDataService.debugMode)
-    console.log('user',userService.getCurrentUser())
+    console.log('mode:',commonDataService.debugMode ? 'debug' : 'prod')
+    console.log('user:',userService.getCurrentUser())
 
     console.log('good')
   };
