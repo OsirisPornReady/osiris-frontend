@@ -79,6 +79,10 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   // }
 
 
+  // 实验方法及结果：连接后台数据库的情况下去掉async/await,直接返回本地数据(没有等this.videoService.initVideoList()中的请求返回值就this.videoService.pushVideoList()了)
+  // 加了async/await进行阻塞,直到服务器返回数据才this.videoService.pushVideoList()
+  // 合理怀疑其实在ngOnInit之前加async本来就是有效的,甚至不用加类型,app中是因为涉及到了初始化和路由跳转所以情况特殊
+
   //ngOnInit在声明类型为Promise<void>后async是有用的
   async ngOnInit(): Promise<void> { //不阻塞的话就直接返回本地测试数据了
     this.videoListSubscription = this.videoService.videoListStream$.subscribe(

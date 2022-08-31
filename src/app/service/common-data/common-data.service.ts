@@ -20,7 +20,7 @@ export class CommonDataService {
     private httpClient: HttpClient,
   ) { }
 
-  async syncGlobalConfig() {
+  async syncGlobalConfig(): Promise<any> {
     try {
       const devConfig:any = await this.httpClient.get('/ajax/globalConfig/getDevConfig').toPromise();
       this.debugMode = devConfig.debugMode;
@@ -28,4 +28,5 @@ export class CommonDataService {
       console.log('服务器无法连接,未获取到全局设置');
     }
   }
+
 }

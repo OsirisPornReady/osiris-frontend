@@ -56,23 +56,6 @@ export class AppComponent implements OnInit {
     //   }
     //
     // });
-
-    await this.commonDataService.syncGlobalConfig();
-    if (this.commonDataService.debugMode) {
-        const user = {
-        "username":"admin",
-        "password":"123456",
-        "authority":{
-          "create":true,
-          "retrieve":true,
-          "update":true,
-          "delete":true
-        },
-        "messageCount": 10
-      }
-      this.userService.setCurrentUser(user)
-    }
-
   }
 
   // async initGlobalConfig(): Promise<void> {
