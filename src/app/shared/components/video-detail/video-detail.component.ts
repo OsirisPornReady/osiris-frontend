@@ -273,20 +273,28 @@ export class VideoDetailComponent implements OnInit,OnDestroy,AfterViewInit {
   }
 
 
-  delete() {
-    this.videoService.deleteVideo(this.VideoId);
-    this.modalRef.destroy();
+  async delete() {
+    try {
+      await this.videoService.deleteVideo(this.VideoId);
+      this.modalRef.destroy();
+    } catch (e) {
+      console.log('删除video失败',e)
+    }
   }
 
 
-  applyChange(): void {
-    this.videoService.updateVideo(this.VideoId,this.video);
-    this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-      this.modalRef.destroy();
-    },300)
-    // this.modalRef.destroy();
+  async applyChange(): Promise<void> {
+    try {
+      this.videoService.updateVideo(this.VideoId,this.video);
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+        this.modalRef.destroy();
+      },300)
+      // this.modalRef.destroy();
+    } catch (e) {
+      console.log('修改video失败',e)
+    }
   }
 
 

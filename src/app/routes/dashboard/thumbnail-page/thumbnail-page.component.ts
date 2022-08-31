@@ -74,12 +74,13 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
 
   }
 
-  ngOnInit() {   //将ngOnInit声明为async,在其中await并没有什么用,程序并不会wait它,用这种方式才会wait
-    this.Init();
-  }
+  // ngOnInit() {   //将ngOnInit声明为async,在其中await并没有什么用,程序并不会wait它,用这种方式才会wait
+  //   this.Init().then(...);
+  // }
 
 
-  async Init() { //不阻塞的话就直接返回本地测试数据了
+  //ngOnInit在声明类型为Promise<void>后async是有用的
+  async ngOnInit(): Promise<void> { //不阻塞的话就直接返回本地测试数据了
     this.videoListSubscription = this.videoService.videoListStream$.subscribe(
       (next:any) => {
         // this._videos = next;
@@ -239,18 +240,22 @@ export class ThumbnailPageComponent implements OnInit,OnDestroy {
   //   this.isVisible = false;
   // }
 
-  quickDelete(e:any,video:any) {
-    e.stopPropagation();
-    // if (video.id === this.videoSwapBuffer[0].id) { //|| this.videoSwapBuffer[1].id == video.id 只用检查一个,如果有两个早换了,也不用foreach什么的
-    //   this.videoSwapBuffer = []; //比pop安全
-    // }
-    //忽略了数组为空的情况
-    this.videoSwapBuffer.forEach(v => {
-      if (video.id === v.id) {
-        this.videoSwapBuffer = []; //比pop安全
-      }
-    })
-    this.videoService.deleteVideo(video.id);
+  async quickDelete(e:any,video:any) {
+    try {
+      e.stopPropagation();
+      // if (video.id === this.videoSwapBuffer[0].id) { //|| this.videoSwapBuffer[1].id == video.id 只用检查一个,如果有两个早换了,也不用foreach什么的
+      //   this.videoSwapBuffer = []; //比pop安全
+      // }
+      //忽略了数组为空的情况
+      this.videoSwapBuffer.forEach(v => {
+        if (video.id === v.id) {
+          this.videoSwapBuffer = []; //比pop安全
+        }
+      })
+      await this.videoService.deleteVideo(video.id);
+    } catch (e) {
+      console.log('删除video失败',e);
+    }
   }
 
   ngOnDestroy() {

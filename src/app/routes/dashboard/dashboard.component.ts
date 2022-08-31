@@ -42,8 +42,13 @@ export class DashboardComponent implements OnInit{
     this.user = this.userService.getCurrentUser();
   }
 
-  addVideo() {
-    const lastId = this.videoService.createVideo()
+  async addVideo() {
+    try {
+      await this.videoService.createVideo()
+    } catch (e) {
+      console.log('添加video失败',e)
+    }
+    // const lastId = this.videoService.createVideo()
 
     // this.modalService.create({
     //   nzContent:VideoDetailComponent,

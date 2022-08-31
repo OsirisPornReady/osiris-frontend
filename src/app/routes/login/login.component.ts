@@ -29,11 +29,12 @@ export class LoginComponent implements OnInit,OnDestroy {
     private nzNotificationService: NzNotificationService,
   ) { }
 
-  ngOnInit() {
-    this.Init();
-  }
+  // ngOnInit() {
+  //   this.Init();
+  // }
 
-  async Init() { //把:void去掉了，async不能有那么多多余类型
+
+  async ngOnInit(): Promise<void> { //把:void去掉了，async不能有那么多多余类型
     this.loginForm = this.fb.group({
       username:['',[Validators.required]],
       password:['',[Validators.required]],

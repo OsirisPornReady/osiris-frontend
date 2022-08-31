@@ -328,7 +328,8 @@ export class VideoService {
 
 
 //--------------先请求，请求成功再改本地------------------------------------------------
-  async createVideo() {
+  //不加类型好像就是隐式的Promise<any>
+  async createVideo(): Promise<any> {
     //调试模式
     if (this.commonDataService.debugMode) {
       const newVideo = new Video();
@@ -371,7 +372,7 @@ export class VideoService {
     return this.getVideo(id);
   }
 
-  async updateVideo(id:number,value:any) {
+  async updateVideo(id:number,value:any): Promise<any> {
     //调试模式
     if (this.commonDataService.debugMode) {
       return this.setVideo(id,value);
@@ -394,7 +395,7 @@ export class VideoService {
     }
   }
 
-  async deleteVideo(id:number) {
+  async deleteVideo(id:number): Promise<any> {
     //调试模式
     if (this.commonDataService.debugMode) {
       return this.removeVideo(id)
