@@ -14,9 +14,9 @@ export class VideoService {
   *   在传入component之前,因为在component中要将数据和组件进行严格对应,所以传入组件的必须是Video类型
   */
 
-  httpOptions = {
-    headers: new HttpHeaders({'Content-Type':'application/json'})
-  };
+  // httpOptions = {
+  //   headers: new HttpHeaders({'Content-Type':'application/json'})
+  // };
 
   videoList:any = [
     new Video(
@@ -391,7 +391,7 @@ export class VideoService {
       const data = JSON.stringify({
         video: newVideo,
       });
-      let res:any = await this.http.post('/ajax/video/createVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      let res:any = await this.http.post('/ajax/video/createVideo',data).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态      ,this.httpOptions
       newVideo.id = res.id;
       console.log(`[Database] video(id:${res.id})视频新增成功`,res);
       return this.addVideo(newVideo);
@@ -419,7 +419,7 @@ export class VideoService {
         id: id,
         video: value,
       });
-      let res:any = await this.http.post('/ajax/video/updateVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      let res:any = await this.http.post('/ajax/video/updateVideo',data).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态      ,this.httpOptions
       console.log(`[Database] video(id:${id})视频信息修改成功`,res);
       return this.setVideo(id,value);
       // return true;
@@ -441,7 +441,7 @@ export class VideoService {
       const data = JSON.stringify({
         id: id,
       });
-      let res:any = await this.http.post('/ajax/video/deleteVideo',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      let res:any = await this.http.post('/ajax/video/deleteVideo',data).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态      ,this.httpOptions
       console.log(`[Database] video(id:${id})视频删除成功`,res);
       return this.removeVideo(id);
       // return true;
@@ -465,7 +465,7 @@ export class VideoService {
         pid: pid,
         cid: cid,
       });
-      let res:any = await this.http.post('/ajax/video/swapVideoOrder',data,this.httpOptions).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态
+      let res:any = await this.http.post('/ajax/video/swapVideoOrder',data).toPromise(); //出错后直接跳到catch,try中剩余代码不执行,要注意在server层中做status 500处理了才会是reject状态       ,this.httpOptions
       console.log(`[Database] video(id:${pid})和video(id:${cid})位置交换成功`,res);
       return this.swapVideo(pIndex,cIndex);
       // return true;

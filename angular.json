@@ -41,7 +41,9 @@
             "styles": [
               "src/styles.less"
             ],
-            "scripts": []
+            "scripts": [
+              "./frontConfig.js"
+            ]
           },
           "configurations": {
             "production": {

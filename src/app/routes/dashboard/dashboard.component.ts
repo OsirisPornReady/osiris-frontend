@@ -9,6 +9,7 @@ import { NzModalService } from "ng-zorro-antd/modal";
 import { CommonDataService } from "../../service/common-data/common-data.service";
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
 import {UserInfoComponent} from "../../shared/components/user-info/user-info.component";
+import { environment } from '@env/environment';
 
 
 @Component({

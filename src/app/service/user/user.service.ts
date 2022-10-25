@@ -12,9 +12,10 @@ import { CommonDataService } from "../common-data/common-data.service";
 
 export class UserService {
 
-  httpOptions = {
-    headers: new HttpHeaders({'Content-Type':'application/json'})
-  };
+  // httpOptions = {  //现在不用写了,直接在拦截器里面添加
+  //   headers: new HttpHeaders({'Content-Type':'application/json'})
+  // };
+
   // userlist: User[] = [
   //   {
   //     username:"admin",
@@ -129,7 +130,7 @@ export class UserService {
 
   setLastUser() {
     const data = JSON.stringify(this.currentUser);
-    return this.http.post('/ajax/user/setLastUser',data,this.httpOptions).toPromise();
+    return this.http.post('/ajax/user/setLastUser',data).toPromise();  //,this.httpOptions
   }
 
   async signIn(userdata:any) {
@@ -145,7 +146,7 @@ export class UserService {
     const data = JSON.stringify(userdata);
 
     // return this.http.post('/ajax/login/post',userdata,httpOptions) //可以return之后在component之中.subscribe()返回值，也可以直接toPromise，这里数据简单就直接toPromise了
-    let res:any = await this.http.post('/ajax/user/login',data,this.httpOptions).toPromise();
+    let res:any = await this.http.post('/ajax/user/login',data).toPromise();  //,this.httpOptions
     if (res) {
       this.setCurrentUser(res.user);
       return res.state;
